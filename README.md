@@ -12,12 +12,14 @@
     - [ ] messages
     - [ ] register page
     - [ ] login page
+    - [ ] profile page
     - [ ] home page
     - [ ] feeds
 
 - [ ] back-end
     - [ ] crawling github repos
     - [ ] socials login using allauth
+    - [ ] logout redirect to login page
 
 - [ ] db
     - [ ] migrate to postgres
