@@ -58,20 +58,27 @@
 <br>
 
 ## Today
+<br>
 
 ### (02-14) 
 `[ririro93]`
+
+Task
 - started working on login page
     - implemented google login (1) with icons (2)
 
-problems
-- [ ] logout redirect does not take user back to login page 
-- -> intended : redirect to `accounts/login`
-- -> instead redirects to `accounts/logout/accounts/login`
-- [ ] navbar doesn't work correctly when not starting from root url
+Problems
+- [x] logout redirect does not take user back to login page 
+    - intended : redirect to `accounts/login`
+    - instead redirects to `accounts/logout/accounts/login`
+    - -> `fixed by using {% url 'login' %} and likewise`
+- [x] navbar doesn't work correctly when not starting from root url
+    - > `also fixed by using {% url 'login' %} and likewise`
 - [ ] login with google makes username ririro931 instead of ririro93 because it already exists
     - [ ] let new username be ririro93@gmail.com instead
-- [ ] django message 'successfully signed in' stays foreeeeeeeeeever
+    - [ ] logout also doesn't logout from google
+        - [ ] next login attempt just lets you go right through
+- [ ] django message 'successfully signed in' stays forever
 
 
 
