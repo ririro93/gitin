@@ -33,7 +33,7 @@
         - [ ] facebook
         - [ ] twitter
     - [ ] logout redirect to login page
-        - [] show logged out message
+        - [ ] show logged out message
 
 - [ ] db
     - [ ] migrate to postgres
@@ -58,8 +58,6 @@
 <br>
 
 ## Today
-<br>
-
 ### (02-14) 
 `[ririro93]`
 
