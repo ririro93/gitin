@@ -5,8 +5,22 @@ from django.contrib.auth import get_user_model
 User = get_user_model()
 
 class RegisterForm(forms.Form):
-    username = forms.CharField()
-    email = forms.EmailField()
+    username = forms.CharField(
+        widget=forms.TextInput(
+            attrs={
+                'class': 'form-control',
+                'id': 'user-id'
+            }
+        )
+    )
+    email = forms.EmailField(
+        widget=forms.EmailInput(
+            attrs={
+                'class': 'form-control',
+                'id': 'user-email'
+            }
+        )
+    )
     password1 = forms.CharField(
         label='Password',
         widget=forms.PasswordInput(
@@ -44,7 +58,14 @@ class RegisterForm(forms.Form):
     
 
 class LoginForm(forms.Form):
-    username = forms.CharField()
+    username = forms.CharField(
+        widget=forms.TextInput(
+            attrs={
+                'class': 'form-control',
+                'id': 'user-id'
+            }
+        )
+    )
     password = forms.CharField(
         widget=forms.PasswordInput(
             attrs={
