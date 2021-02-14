@@ -45,7 +45,7 @@ class RegisterForm(forms.Form):
         # iexact -> not case-sensitive
         qs = User.objects.filter(username__iexact=username)
         if qs.exists():
-            raise forms.ValidationsError('This is an invalid username, please pick another')
+            raise forms.ValidationError('This is an invalid username, please pick another')
         return username
 
     def clean_email(self):
@@ -53,7 +53,7 @@ class RegisterForm(forms.Form):
         # iexact -> not case-sensitive
         qs = User.objects.filter(email__iexact=email)
         if qs.exists():
-            raise forms.ValidationsError('This email is already in use, please pick another')
+            raise forms.ValidationError('This email is already in use, please pick another')
         return email
     
 
@@ -84,5 +84,5 @@ class LoginForm(forms.Form):
         # iexact -> not case-sensitive
         qs = User.objects.filter(username__iexact=username)
         if not qs.exists():
-            raise forms.ValidationsError('This is an invalid user.')
+            raise forms.ValidationError('This is an invalid username.')
         return username

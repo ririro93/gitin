@@ -21,7 +21,7 @@ INSTALLED_APPS = [
     
     # my apps
     'accounts',
-    'social_app',
+    'profiles',
 ]
 
 MIDDLEWARE = [
