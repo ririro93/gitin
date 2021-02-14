@@ -45,6 +45,7 @@
     - [ ] repo : see all liked repos all organized in one page
     - [ ] feeds : when new repo created
     - [ ] starter guide for ppl new to programming
+        - [ ] make guide interactive (embedded live code editors & terminals)
 
 - [ ] etc
     - [ ] add license
