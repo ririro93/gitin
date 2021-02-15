@@ -85,7 +85,7 @@ Problems
 `[ririro93]`
  
  Task
- - implemented github login
+ - implemented github, twitter login
 
 <br>
 
