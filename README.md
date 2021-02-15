@@ -29,7 +29,7 @@
     - [ ] crawling github repos
     - [ ] socials login using allauth
         - [x] google
-        - [ ] github
+        - [x] github
         - [ ] facebook
         - [ ] twitter
     - [ ] logout redirect to login page
@@ -78,8 +78,15 @@ Problems
         - [ ] next login attempt just lets you go right through
 - [ ] django message 'successfully signed in' stays forever
 
+<br>
 
+### (02-15)
 
+`[ririro93]`
+ 
+ Task
+ - implemented github login
+ 
 <br>
 
 ## Reference
