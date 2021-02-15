@@ -11,10 +11,8 @@ from .views import (
 urlpatterns = [
     path('login/', login_view, name='login'),
     path('logout/', logout_view, name='logout'),
-    path('signup/', signup_view, name='signup'),
+    path('signup/', signup_view, name='signup'),   
     
-    # # sns logins
-    # path('login/google_login/', TemplateView.as_view(template_name='accounts/google_login.html')),
-    # path('login/github_login/', TemplateView.as_view(template_name='accounts/github_login.html')),
-    # path('login/github_login/', TemplateView.as_view(template_name='accounts/twitter_login.html')),
+    # need to make reset_pw_view
+    path('reset_pw/', signup_view, name='reset_pw'),   
 ]
