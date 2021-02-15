@@ -65,7 +65,7 @@
 ### (02-14) 
 `[ririro93]`
 
-Task
+Tasks
 - started working on login page
     - implemented google login (1) with icons (2)
 
@@ -88,7 +88,7 @@ Problems
 
 `[ririro93]`
  
- Task
+ Tasks
  - [x] accounts
     - [x] implement github, twitter login
     - [x] signup_page
