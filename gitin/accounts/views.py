@@ -1,10 +1,10 @@
 from django.contrib.auth import authenticate, login, logout
 from django.shortcuts import render, redirect
 
-from .forms import RegisterForm, LoginForm
+from .forms import SignupForm, LoginForm
 
-def register_view(request):
-    form = RegisterForm(request.POST or None)
+def signup_view(request):
+    form = SignupForm(request.POST or None)
     if form.is_valid():
         username = form.cleaned_data.get('username')
         email = form.cleaned_data.get('email')

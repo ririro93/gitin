@@ -28,7 +28,7 @@
 - [ ] back-end
     - [ ] crawling github repos
     - [ ] socials login using allauth
-        - [ ] google
+        - [x] google
         - [ ] github
         - [ ] facebook
         - [ ] twitter

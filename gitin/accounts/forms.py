@@ -4,7 +4,7 @@ from django.contrib.auth import get_user_model
 # check for unique email and username
 User = get_user_model()
 
-class RegisterForm(forms.Form):
+class SignupForm(forms.Form):
     username = forms.CharField(
         widget=forms.TextInput(
             attrs={
