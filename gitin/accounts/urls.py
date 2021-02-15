@@ -15,4 +15,5 @@ urlpatterns = [
     
     # sns logins
     path('login/google_login/', TemplateView.as_view(template_name='accounts/google_login.html')),
+    path('login/github_login/', TemplateView.as_view(template_name='accounts/github_login.html')),
 ]
