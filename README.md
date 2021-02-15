@@ -31,7 +31,7 @@
         - [x] google
         - [x] github
         - [ ] facebook
-        - [ ] twitter
+        - [x] twitter
     - [ ] logout redirect to login page
         - [ ] show logged out message
 
@@ -86,7 +86,7 @@ Problems
  
  Task
  - implemented github login
- 
+
 <br>
 
 ## Reference
