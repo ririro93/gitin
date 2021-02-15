@@ -4,6 +4,7 @@
 `[ririro93]`
 - try django-allauth
 - keep to git commit conventions
+- get used to CBV
 
 <br>
 
@@ -35,7 +36,7 @@
     - [ ] feeds
 
 - [ ] back-end
-    - [ ] crawling github repos
+    - [ ] get repo data from github API
     - [ ] socials login using allauth
         - [x] google
         - [x] github
@@ -70,7 +71,7 @@
 ### (02-14) 
 `[ririro93]`
 
-Task
+Tasks
 - started working on login page
     - implemented google login (1) with icons (2)
 
@@ -93,9 +94,12 @@ Problems
 
 `[ririro93]`
  
- Task
- - [x]implement github, twitter login
- - [x]frontend: signup_page
+ Tasks
+ - [x] accounts
+    - [x] implement github, twitter login
+    - [x] signup_page
+ - [x] gitAPI
+    - [x] recieve repo data according to requested username   
 
 <br>
 
