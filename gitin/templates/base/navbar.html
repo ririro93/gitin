@@ -15,10 +15,10 @@
           </li>
         </div>
         <div class='d-flex'>
-          {% if request.user.is_authenticated %}
+          {% if user.is_authenticated %}
           <li class="nav-item">
             <!-- profile url not ready yet -->
-            <a class="nav-link" href="{% url 'logout' %}">{{ request.user }}</a>
+            <a class="nav-link" href="{% url 'logout' %}">{{ user }}</a>
           </li>
           <li class="nav-item">
             <a class="nav-link" href="{% url 'logout' %}">Logout</a>

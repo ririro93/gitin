@@ -84,9 +84,6 @@ SOCIALACCOUNT_PROVIDERS = {
             'read:org',
         ],
     },
-    # 'twitter': {
-        
-    # }
 }
 
 WSGI_APPLICATION = 'gitin.wsgi.application'
@@ -134,4 +131,5 @@ STATICFILES_DIRS = [
 ]
 
 # login
-LOGIN_REDIRECT_URL = '/'
+LOGIN_REDIRECT_URL = 'home'
+LOGOUT_REDIRECT_URL = 'home'

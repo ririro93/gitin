@@ -18,9 +18,12 @@
 - [ ] front-end
     - [ ] navbar
     - [ ] django messages
-    - [ ] register page
+    - [ ] signup page
+        - [ ] add interests tags
     - [ ] login page
-        - [ ] form validation -> use bootstrap?
+        - [ ] form validation -> use bootstrap? or django.contrib.auth.authenticate?
+        - [ ] consider github as the only main socials login
+        - [ ] reset password page
     - [ ] profile page
     - [ ] home page
     - [ ] feeds
@@ -85,7 +88,8 @@ Problems
 `[ririro93]`
  
  Task
- - implemented github, twitter login
+ - [x]implement github, twitter login
+ - [x]frontend: signup_page
 
 <br>
 

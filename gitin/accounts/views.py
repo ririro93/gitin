@@ -26,7 +26,7 @@ def signup_view(request):
             # request.session['attempt'] = attempt + 1
             # return redirect('/invalid-password')
             request.session['register_error'] = 1
-    return render(request, 'forms.html', {'form': form})
+    return render(request, 'accounts/signup_page.html', {'form': form})
 
 def login_view(request):
     form = LoginForm(request.POST or None)
