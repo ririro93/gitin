@@ -13,7 +13,8 @@ urlpatterns = [
     path('logout/', logout_view, name='logout'),
     path('signup/', signup_view, name='signup'),
     
-    # sns logins
-    path('login/google_login/', TemplateView.as_view(template_name='accounts/google_login.html')),
-    path('login/github_login/', TemplateView.as_view(template_name='accounts/github_login.html')),
+    # # sns logins
+    # path('login/google_login/', TemplateView.as_view(template_name='accounts/google_login.html')),
+    # path('login/github_login/', TemplateView.as_view(template_name='accounts/github_login.html')),
+    # path('login/github_login/', TemplateView.as_view(template_name='accounts/twitter_login.html')),
 ]

@@ -19,6 +19,7 @@ INSTALLED_APPS = [
     'allauth.socialaccount',
     'allauth.socialaccount.providers.google',
     'allauth.socialaccount.providers.github',
+    'allauth.socialaccount.providers.twitter',
     
     # my apps
     'accounts',
@@ -64,6 +65,8 @@ AUTHENTICATION_BACKENDS = [
 
 SITE_ID = 2
 
+# ACCOUNT_EMAIL_REQUIRED = True
+
 SOCIALACCOUNT_PROVIDERS = {
     'google': {
         'SCOPE': [
@@ -81,6 +84,9 @@ SOCIALACCOUNT_PROVIDERS = {
             'read:org',
         ],
     },
+    # 'twitter': {
+        
+    # }
 }
 
 WSGI_APPLICATION = 'gitin.wsgi.application'
