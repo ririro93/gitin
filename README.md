@@ -25,6 +25,12 @@
         - [ ] consider github as the only main socials login
         - [ ] reset password page
     - [ ] profile page
+        - [ ] Items
+            - [ ] gihub.io link
+            - [ ] bio
+            - [ ] interests
+            - [ ] follwers / following
+        - [ ] Research other services
     - [ ] home page
     - [ ] feeds
 
