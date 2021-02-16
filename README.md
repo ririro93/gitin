@@ -5,6 +5,8 @@
 - try django-allauth
 - keep to git commit conventions
 - get used to CBV
+- try Typescript
+- study datetime objects, timezones(naive)
 
 <br>
 
@@ -36,6 +38,9 @@
         - [x] github
         - [ ] facebook
         - [x] twitter
+    - [ ] if user tries to sign in using a username that already exists on Github -> ask if same person
+        - yes -> would you like to sign in using your github account?
+        - no -> please choose a different username. 
     - [ ] logout redirect to login page
         - [ ] show logged out message
 
@@ -94,6 +99,16 @@ Problems
     - [x] signup_page
  - [x] gitAPI
     - [x] recieve repo data according to requested username   
+
+<br>
+
+### (02-16)
+
+`[ririro93]`
+
+Tasks
+- [ ] gitAPI
+    - [ ] create models for users and repos
 
 <br>
 
