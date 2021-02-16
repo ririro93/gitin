@@ -36,4 +36,5 @@ class CreateGithubRepo(View):
                 **{key: val for key, val in repo.items() if key in github_repo_fields and key != 'owner'},
                 owner=githubUser
             )
-            print(githubRepo)
+            if created:
+                print(f'{githubRepo} added to db')
