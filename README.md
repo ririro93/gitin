@@ -122,6 +122,10 @@ Learned
 - there might be an easier way but for now I can get a list of all field names of a model by using <br>
 `list(map(lambda x: x.name, <ModelName>._meta.fields))`
 
+Problem
+- [ ] repos with same names from different Github users 
+- [ ] inputting same username twice should only update the datetime fields of the GithubRepo model
+
 <br>
 
 ## Reference
