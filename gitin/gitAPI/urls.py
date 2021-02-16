@@ -3,9 +3,9 @@ from django.urls import path, include
 from django.views.generic import TemplateView
 
 from .views import (
-    GithubView,
+    CreateGithubRepo,
 )
 
 urlpatterns = [
-    path('get-repo-info/', GithubView.as_view(), name='github'),
+    path('create-repo-info', CreateGithubRepo.as_view(), name='github'),
 ]

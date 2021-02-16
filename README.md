@@ -5,6 +5,8 @@
 - try django-allauth
 - keep to git commit conventions
 - get used to CBV
+- try Typescript
+- study datetime objects, timezones(naive)
 
 <br>
 
@@ -42,6 +44,9 @@
         - [x] github
         - [ ] facebook
         - [x] twitter
+    - [ ] if user tries to sign in using a username that already exists on Github -> ask if same person
+        - yes -> would you like to sign in using your github account?
+        - no -> please choose a different username. 
     - [ ] logout redirect to login page
         - [ ] show logged out message
 
@@ -100,6 +105,22 @@ Problems
     - [x] signup_page
  - [x] gitAPI
     - [x] recieve repo data according to requested username   
+
+<br>
+
+### (02-16)
+
+`[ririro93]`
+
+Tasks
+- [x] gitAPI
+    - [x] create models for users and repos
+    - [x] added view for Creating and Updating these models
+    - [x] entering an Github username in the navbar input activates the Creating and Updating
+
+Learned
+- there might be an easier way but for now I can get a list of all field names of a model by using <br>
+`list(map(lambda x: x.name, <ModelName>._meta.fields))`
 
 <br>
 
