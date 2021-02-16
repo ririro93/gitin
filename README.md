@@ -107,8 +107,14 @@ Problems
 `[ririro93]`
 
 Tasks
-- [ ] gitAPI
-    - [ ] create models for users and repos
+- [x] gitAPI
+    - [x] create models for users and repos
+    - [x] added view for Creating and Updating these models
+    - [x] entering an Github username in the navbar input activates the Creating and Updating
+
+Learned
+- there might be an easier way but for now I can get a list of all field names of a model by using <br>
+`list(map(lambda x: x.name, <ModelName>._meta.fields))`
 
 <br>
 
