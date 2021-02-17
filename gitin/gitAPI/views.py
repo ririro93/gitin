@@ -17,11 +17,11 @@ class CreateGithubRepo(View):
         URL = f'https://api.github.com/users/{username}/repos'
         res = requests.get(URL)
         if res.status_code == 200:
-            self.create_github_user(username, res)
+            self.create_github_user(res, username)
         return JsonResponse({'githubData' : res.json()}, status = 200)
     
     # there should be a better way to implement these two methods without them being connected
-    def create_github_user(self, username, res):
+    def create_github_user(self, res, username):
         githubUser, created = GithubUser.objects.update_or_create(
             username=username
         )
