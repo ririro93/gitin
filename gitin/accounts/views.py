@@ -1,9 +1,15 @@
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.models import User
 from django.shortcuts import render, redirect
 
 from .forms import SignupForm, LoginForm
+from .models import GitinUser
 
 def signup_view(request):
+    """
+    User.username is used to login
+    GitinUser.profilename is shown on profile
+    """
     form = SignupForm(request.POST or None)
     if form.is_valid():
         username = form.cleaned_data.get('username')
@@ -13,6 +19,10 @@ def signup_view(request):
 
         try:
             user = User.objects.create_user(username, email, password)
+            GitinUser.objects.create(
+                user=user,
+                profilename=username,
+            )
         except:
             user = None
             

@@ -1,7 +1,8 @@
 from django.contrib import admin
 
 from .models import GithubUser, GithubRepo
-
+ 
+    
 @admin.register(GithubUser)
 class GithubUserAdmin(admin.ModelAdmin):
     date_hierarchy = 'updated'
@@ -11,6 +12,7 @@ class GithubUserAdmin(admin.ModelAdmin):
         'updated',
     )
     readonly_fields = ['created', 'updated']
+    
     
 @admin.register(GithubRepo)
 class GithubRepoAdmin(admin.ModelAdmin):

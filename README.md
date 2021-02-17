@@ -66,6 +66,7 @@
     - [ ] feeds : when new repo created
     - [ ] starter guide for ppl new to programming
         - [ ] make guide interactive (embedded live code editors & terminals)
+    - [ ] comments section that moves around
 
 - [ ] etc
     - [ ] add license
@@ -128,6 +129,19 @@ Problem
 
 <br>
 
-## Reference
+### (02-17)
+
+`[ririro93]`
+
+Learned
+- (3) adding ImageField to a model requires the following
+    - adding MEDIA_URL, MEDIA_ROOT to settings
+    - adding `static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)` to urlpatterns
+    - calling image via url `src="{{ user.gitinuser.profile_img.url }}"`
+
+<br>
+
+## References
 (1) [medium post](https://whizzoe.medium.com/in-5-mins-set-up-google-login-to-sign-up-users-on-django-e71d5c38f5d5) : google login <br>
-(2) [iconfinder](https://www.iconfinder.com/social-media-icons) : sns icons
+(2) [iconfinder](https://www.iconfinder.com/social-media-icons) : sns icons <br>
+(3) [ImageField](https://studygyaan.com/django/how-to-upload-and-display-image-in-django) : profile image

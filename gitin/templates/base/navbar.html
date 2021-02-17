@@ -1,11 +1,11 @@
-<nav class="navbar navbar-expand-lg navbar-light bg-light">
+<nav class="navbar navbar-expand-lg navbar-light bg-light my-navbar">
   <div class="container-fluid">
     <a class="navbar-brand" href="/">Gitin</a>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
-      <ul class="navbar-nav d-flex justify-content-between" style="width: 100%;">
+      <ul class="navbar-nav d-flex justify-content-between align-items-center" style="width: 100%;">
         <!-- left-side-->
         <div class='d-flex'>
           <li class="nav-item">
@@ -23,12 +23,17 @@
         <!-- right-side -->
         <div class='d-flex'>
           {% if user.is_authenticated %}
-          <li class="nav-item">
-            <!-- profile url not ready yet -->
-            <a class="nav-link" href="{% url 'logout' %}">{{ user }}</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="{% url 'logout' %}">Logout</a>
+          <li class="nav-item dropdown me-3">
+            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              <img class="profile-img" src="{{ user.gitinuser.profile_img.url }}" alt="{{ user.gitinuser.profilename }}'s profile image">
+              <!-- {{ user.gitinuser.profilename }} -->
+            </a>
+            <ul class="dropdown-menu profile-dropdown" aria-labelledby="navbarDropdown">
+              <li><a class="dropdown-item" href="#">Profile</a></li>
+              <li><a class="dropdown-item" href="#">sth</a></li>
+              <li><hr class="dropdown-divider"></li>
+              <li><a class="dropdown-item" href="{% url 'logout' %}">Logout</a></li>
+            </ul>
           </li>
           {% else %}
           <li class="nav-item">

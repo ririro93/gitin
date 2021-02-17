@@ -1,3 +1,10 @@
 from django.contrib import admin
+from .models import GitinUser
 
-# Register your models here.
+@admin.register(GitinUser)
+class GitinUserAdmin(admin.ModelAdmin):
+    list_display = (
+        'user',
+        'profilename',
+    )
+   
