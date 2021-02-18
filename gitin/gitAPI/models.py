@@ -44,7 +44,7 @@ class RepoComment(models.Model):
         related_name='author',
         on_delete=models.CASCADE,
     )
-    content = models.TextField()
+    content = models.CharField(max_length=400)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
     

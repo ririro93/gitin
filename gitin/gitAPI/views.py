@@ -59,10 +59,13 @@ class RepoDetailView(DetailView):
         # check this portion
         if self.request.user.is_authenticated:
             context['comment_form'] = CommentForm(instance=self.request.user)
-            
+        print(context)
         return context
     
     def post(self, request, *args, **kwargs):
+        """
+        create new RepoComment
+        """
         new_comment = RepoComment(
             content=request.POST.get('content'),
             author=self.request.user.gitinuser,

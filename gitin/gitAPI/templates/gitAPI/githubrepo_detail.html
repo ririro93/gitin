@@ -2,8 +2,18 @@
 {% load static %}
 
 {% block content %}
+<!-- Repo -->
+<section>
+  <h2>pk: {{ object.pk }}</h2>
+  <h2>name: {{ object.name }}</h2>
+  <h2>owner: {{ object.owner }}</h2>
+  <h2>html_url: {{ object.html_url }}</h2>
+  <h2>description: {{ object.description }}</h2>
+  <h2>created_at: {{ object.created_at }}</h2>
+  <h2>updated_at: {{ object.updated_at }}</h2>
+  <h2>pushed_at: {{ object.pushed_at }}</h2>
+</section>
 <!-- COMMENTS  -->
-<h2>Leave your comment!</h2>
 <div id="comments_section">
 
   {% if user.is_authenticated %}
@@ -11,7 +21,7 @@
     {% csrf_token %}
     <div class="form-group">
       {{ comment_form }}
-      <button class="btn btn-info" type="submit">Add comment <i class="fas fa-comments"></i></button>
+      <button class="btn btn-primary" type="submit">Add comment</button>
     </div>
   </form>
   {% else %}
@@ -26,8 +36,8 @@
     <li>           
      <div>
         <span>
-          <strong class="text-info">{{ comment.author }} </strong>
-          <small class="text-muted">{{ comment.date_posted }}</small>
+          <strong class="text-primary">{{ comment.author }} </strong>
+          <small class="text-muted">{{ comment.updated }}</small>
         </span>
         <p>
           {{ comment.content|safe }}
