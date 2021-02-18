@@ -36,9 +36,12 @@
         - [ ] Research other services
     - [ ] home page
     - [ ] feeds
+    - [ ] repo view
+        - [ ] basic view
+        - [ ] commenting section
 
 - [ ] back-end
-    - [ ] get repo data from github API
+    - [x] get repo data from github API
     - [ ] socials login using allauth
         - [x] google
         - [x] github
@@ -145,3 +148,4 @@ Learned
 (1) [medium post](https://whizzoe.medium.com/in-5-mins-set-up-google-login-to-sign-up-users-on-django-e71d5c38f5d5) : google login <br>
 (2) [iconfinder](https://www.iconfinder.com/social-media-icons) : sns icons <br>
 (3) [ImageField](https://studygyaan.com/django/how-to-upload-and-display-image-in-django) : profile image
+(4) [dev.to](https://dev.to/radualexandrub/how-to-create-a-comment-section-for-your-django-blog-3egp)
