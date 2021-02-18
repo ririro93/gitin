@@ -36,9 +36,12 @@
         - [ ] Research other services
     - [ ] home page
     - [ ] feeds
+    - [ ] repo view
+        - [ ] basic view
+        - [ ] commenting section
 
 - [ ] back-end
-    - [ ] get repo data from github API
+    - [x] get repo data from github API
     - [ ] socials login using allauth
         - [x] google
         - [x] github
