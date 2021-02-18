@@ -50,7 +50,22 @@ class RepoComment(models.Model):
     
     def __str__(self):
         return f'{self.author} {self.repo_connected} {self.content}'
+
+class RepoCommit(models.Model):
+    repo_connected = models.ForeignKey(
+        GithubRepo,
+        related_name='commits',
+        on_delete=models.CASCADE,
+    )
+    author = models.CharField(max_length=200, blank=True, null=True)
+    commit = models.JSONField()
+    url = models.CharField(max_length=300)
+    # probably should add commited time
     
+    def __str__(self):
+        return self.url
+    
+
 
         
     

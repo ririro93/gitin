@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import GithubUser, GithubRepo, RepoComment
+from .models import GithubUser, GithubRepo, RepoComment, RepoCommit
  
     
 @admin.register(GithubUser)
@@ -30,7 +30,7 @@ class GithubRepoAdmin(admin.ModelAdmin):
     )
 
 @admin.register(RepoComment)
-class RepoCommentsAdmin(admin.ModelAdmin):
+class RepoCommentAdmin(admin.ModelAdmin):
     date_hierarchy = 'updated'
     list_display = (
         'repo_connected',
@@ -38,4 +38,14 @@ class RepoCommentsAdmin(admin.ModelAdmin):
         'content',
         'created',
         'updated',
+    )
+
+
+@admin.register(RepoCommit)
+class RepoCommitAdmin(admin.ModelAdmin):
+    # date_hierarchy = 'updated'
+    list_display = (
+        'repo_connected',
+        'author',
+        'url'
     )

@@ -5,7 +5,7 @@ from django.shortcuts import render
 from django.views import View
 from django.views.generic import DetailView
 
-from .models import GithubUser, GithubRepo, RepoComment
+from .models import GithubUser, GithubRepo, RepoComment, RepoCommit
 from .forms import CommentForm
 
 class CreateGithubRepo(View):
@@ -16,9 +16,12 @@ class CreateGithubRepo(View):
     https://api.github.com/repos/ririro93/algorithm_probs/commits
     """
     def get(self, request):
+        # GET request
         username = request.GET.get('username')
         URL = f'https://api.github.com/users/{username}/repos'
         res = requests.get(URL)
+        
+        # if username exists -> create or update user and owned repos
         if res.status_code == 200:
             self.create_github_user(res, username)
         return JsonResponse({'githubData' : res.json()}, status = 200)
@@ -31,16 +34,60 @@ class CreateGithubRepo(View):
         self.create_github_repo(res, githubUser)
     
     def create_github_repo(self, res, githubUser):
-        # gets all the field names from GithubRepo Model
+        # get GithubRepo field names
         github_repo_fields = list(map(lambda x: x.name, GithubRepo._meta.fields))
         repos = res.json()
+        
+        # for each repo
         for repo in repos:
+            # create or update GithubRepo
             githubRepo, created = GithubRepo.objects.update_or_create(
-                **{key: val for key, val in repo.items() if key in github_repo_fields and key != 'owner'},
+                **{key: val for key, val in repo.items() if key in github_repo_fields and key not in ['id', 'owner']},
                 owner=githubUser
             )
             if created:
                 print(f'{githubRepo} added to db')
+
+            # create RepoCommits
+            self.create_repo_commits(repo, githubRepo)
+    
+    def create_repo_commits(self, repo, githubRepo):
+        """
+        get commits data and create RepoCommit objects
+        this only shows the most recent 30 commits
+        """
+        # get API
+        commits_URL = repo.get('commits_url').replace('{/sha}', '')
+        commits_res = requests.get(commits_URL)
+        commits_json = commits_res.json()
+        print(f'for {repo.get("name")}')
+        # for each commit
+        for commit_json in commits_json:
+            # format
+            repo_connected = githubRepo
+            commit = commit_json.get('commit')
+            url = commit_json.get('url')
+            
+            # some commits had null as author..
+            try:
+                author = commit_json.get('author').get('login')
+            except:
+                author = 'unknown'
+            
+            # create 
+            repo_commit, created = RepoCommit.objects.update_or_create(
+                repo_connected=repo_connected,
+                author=author,
+                commit=commit,
+                url=url,
+            )
+            if created:
+                print(f'{repo_commit} added to db')
+
+
+    def create_content(self, repo):
+        contents_URL = repo.get('contents_url').replace('{/sha}', '')
+        
                 
                 
 class RepoDetailView(DetailView):
