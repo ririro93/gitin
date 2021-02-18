@@ -13,6 +13,7 @@ urlpatterns = [
     path('accounts/', include('accounts.urls')),
     path('accounts/', include('allauth.urls')),   
     path('github/', include('gitAPI.urls')),
+    path('repo/', include('repo.urls')),
 ]
 
 if settings.DEBUG:

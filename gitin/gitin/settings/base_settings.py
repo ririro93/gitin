@@ -26,6 +26,7 @@ INSTALLED_APPS = [
     'accounts',
     'profiles',
     'gitAPI',
+    'repo',
 ]
 
 MIDDLEWARE = [
