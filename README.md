@@ -144,6 +144,14 @@ Learned
 
 <br>
 
+### (02-17)
+
+`[ririro93]`
+
+Problem
+- GET request to github's API for commits only gives 30 recent commits -> find way to get all commits
+- found out that there is a 5000 API request limit per hour per ip address -> adding all 30 most recent commits per repo maybe too costly
+
 ## References
 (1) [medium post](https://whizzoe.medium.com/in-5-mins-set-up-google-login-to-sign-up-users-on-django-e71d5c38f5d5) : google login <br>
 (2) [iconfinder](https://www.iconfinder.com/social-media-icons) : sns icons <br>
