@@ -137,5 +137,6 @@ SOCIALACCOUNT_PROVIDERS = {
     },
 }
 
-# default setting is going to 'profile'
-LOGIN_REDIRECT_URL = 'home'
+# # default setting is going to 'profile'
+# LOGIN_REDIRECT_URL = 'home'
+# LOGOUT_REDIRECT_URL = 'home'

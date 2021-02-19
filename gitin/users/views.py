@@ -1,59 +1,56 @@
 from django.contrib.auth import authenticate, login, logout
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 from django.shortcuts import render, redirect
 
 from .forms import SignupForm, LoginForm
 from .models import CustomUser
 
+User = get_user_model()
+
 def signup_view(request):
-    """
-    User.username is used to login
-    CustomUser.profilename is shown on profile
-    """
     form = SignupForm(request.POST or None)
     if form.is_valid():
+        print(form.cleaned_data)
         username = form.cleaned_data.get('username')
         email = form.cleaned_data.get('email')
         password1 = form.cleaned_data.get('password1')
         password2 = form.cleaned_data.get('password2')
-
         try:
-            user = User.objects.create_user(username, email, password)
-            CustomUser.objects.create(
-                user=user,
-                profilename=username,
-            )
+            user = User.objects.create_user(email, password1)
+            user = authenticate(request, email=email, password=password1)
+            print('new user signup!')
         except:
             user = None
-            
+            print('INVALID SIGNUP!')
+        
+        # if valid signup
         if user != None:
             login(request, user)
             return redirect('/')
         # if invalid
         else:
-            ## 이런 식으로 많이 틀리면 다른데로 보내든가 할 수 있음
-            # attempt = request.session.get('attempt', 0)
-            # request.session['attempt'] = attempt + 1
-            # return redirect('/invalid-password')
-            request.session['register_error'] = 1
+            print('invalid sign up')
+            print(request.session)
     return render(request, 'users/signup_page.html', {'form': form})
 
 def login_view(request):
     form = LoginForm(request.POST or None)
     if form.is_valid():
-        username = form.cleaned_data.get('username')
+        email = form.cleaned_data.get('email')
         password = form.cleaned_data.get('password')
-        user = authenticate(request, username=username, password=password)
+        user = authenticate(request, email=email, password=password)
+        # if valid login
         if user != None:
             login(request, user)
             return redirect('/')
         # if invalid
         else:
+            pass
             ## 이런 식으로 많이 틀리면 다른데로 보내든가 할 수 있음
             # attempt = request.session.get('attempt', 0)
             # request.session['attempt'] = attempt + 1
             # return redirect('/invalid-password')
-            request.session['invalid_user'] = 1
+            # request.session['invalid_user'] = 1
     return render(request, 'users/login_page.html', {'form': form})
 
 def logout_view(request):

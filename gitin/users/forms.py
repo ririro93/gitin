@@ -5,48 +5,46 @@ from django.contrib.auth import get_user_model
 User = get_user_model()
 
 class SignupForm(forms.Form):
-    username = forms.CharField(
-        widget=forms.TextInput(
-            attrs={
-                'class': 'form-control',
-                'id': 'user-id'
-            }
-        )
-    )
     email = forms.EmailField(
+        label=False,
         widget=forms.EmailInput(
             attrs={
                 'class': 'form-control',
-                'id': 'user-email'
+                'id': 'user-email',
+                'placeholder': 'Email'
+            }
+        )
+    )
+    username = forms.CharField(
+        label=False,
+        widget=forms.TextInput(
+            attrs={
+                'class': 'form-control',
+                'id': 'user-id',
+                'placeholder': 'Username'
             }
         )
     )
     password1 = forms.CharField(
-        label='Password',
+        label=False,
         widget=forms.PasswordInput(
             attrs={
                 'class': 'form-control',
-                'id': 'user-password'
+                'id': 'user-password',
+                'placeholder': 'Password'
             }
         ),
     )
     password2 = forms.CharField(
-        label='Confirm Password',
+        label=False,
         widget=forms.PasswordInput(
             attrs={
                 'class': 'form-control',
-                'id': 'user-confirm-password'
+                'id': 'user-confirm-password',
+                'placeholder': 'Confirm Password'
             }
         ),
     )
-    
-    def clean_username(self):
-        username = self.cleaned_data.get('username')
-        # iexact -> not case-sensitive
-        qs = User.objects.filter(username__iexact=username)
-        if qs.exists():
-            raise forms.ValidationError('This is an invalid username, please pick another')
-        return username
 
     def clean_email(self):
         email = self.cleaned_data.get('email')
@@ -58,31 +56,31 @@ class SignupForm(forms.Form):
     
 
 class LoginForm(forms.Form):
-    username = forms.CharField(
+    email = forms.CharField(
+        label=False,
         widget=forms.TextInput(
             attrs={
                 'class': 'form-control',
-                'id': 'user-id'
+                'id': 'user-id',
+                'placeholder': 'Email',
             }
         )
     )
     password = forms.CharField(
+        label=False,
         widget=forms.PasswordInput(
             attrs={
                 'class': 'form-control',
-                'id': 'user-password'
+                'id': 'user-password',
+                'placeholder': 'Password',
             }
         ),
     )
     
-    # def clean(self):
-    #     username = self.cleaned_data.get('username')
-    #     password = self.cleaned_data.get('password')
-    
-    def clean_username(self):
-        username = self.cleaned_data.get('username')
+    def clean_email(self):
+        email = self.cleaned_data.get('email')
         # iexact -> not case-sensitive
-        qs = User.objects.filter(username__iexact=username)
+        qs = User.objects.filter(email__iexact=email)
         if not qs.exists():
-            raise forms.ValidationError('This is an invalid username.')
-        return username
+            raise forms.ValidationError('This is an invalid email.')
+        return email

@@ -28,8 +28,9 @@
 <!-- GitIn login -->
 <section class="container">
   <div class="row">
-    <form class="col-4 offset-4 d-flex flex-column p-0" method='POST' action="." enctype="multipart/form-data">{% csrf_token %}
+    <form class="col-4 offset-4 d-flex flex-column p-0" method='POST' action="." enctype="multipart/form-data">
       <hr>
+      {% csrf_token %}
       
       {{ form.as_p }}
       
