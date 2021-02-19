@@ -1,8 +1,9 @@
 from django.db import models
-from accounts.models import GitinUser
+
+from users.models import CustomUser
 
 class GithubUser(models.Model):
-    gitinuser = models.OneToOneField(GitinUser, on_delete=models.SET_NULL, null=True)
+    gitinuser = models.OneToOneField(CustomUser, on_delete=models.SET_NULL, null=True)
     username = models.CharField(max_length=20)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
@@ -40,7 +41,7 @@ class RepoComment(models.Model):
         on_delete=models.CASCADE,
     )
     author = models.ForeignKey(
-        GitinUser,
+        CustomUser,
         related_name='author',
         on_delete=models.CASCADE,
     )

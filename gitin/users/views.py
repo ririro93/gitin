@@ -3,12 +3,12 @@ from django.contrib.auth.models import User
 from django.shortcuts import render, redirect
 
 from .forms import SignupForm, LoginForm
-from .models import GitinUser
+from .models import CustomUser
 
 def signup_view(request):
     """
     User.username is used to login
-    GitinUser.profilename is shown on profile
+    CustomUser.profilename is shown on profile
     """
     form = SignupForm(request.POST or None)
     if form.is_valid():
@@ -19,7 +19,7 @@ def signup_view(request):
 
         try:
             user = User.objects.create_user(username, email, password)
-            GitinUser.objects.create(
+            CustomUser.objects.create(
                 user=user,
                 profilename=username,
             )
@@ -36,7 +36,7 @@ def signup_view(request):
             # request.session['attempt'] = attempt + 1
             # return redirect('/invalid-password')
             request.session['register_error'] = 1
-    return render(request, 'accounts/signup_page.html', {'form': form})
+    return render(request, 'users/signup_page.html', {'form': form})
 
 def login_view(request):
     form = LoginForm(request.POST or None)
@@ -54,7 +54,7 @@ def login_view(request):
             # request.session['attempt'] = attempt + 1
             # return redirect('/invalid-password')
             request.session['invalid_user'] = 1
-    return render(request, 'accounts/login_page.html', {'form': form})
+    return render(request, 'users/login_page.html', {'form': form})
 
 def logout_view(request):
     logout(request)

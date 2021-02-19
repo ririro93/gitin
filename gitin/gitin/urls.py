@@ -10,7 +10,7 @@ from .views import (
 urlpatterns = [
     path('', Home_page.as_view(), name='home'),
     path('admin/', admin.site.urls),
-    path('accounts/', include('accounts.urls')),
+    path('users/', include('users.urls')),
     path('accounts/', include('allauth.urls')),   
     path('github/', include('gitAPI.urls')),
 ]

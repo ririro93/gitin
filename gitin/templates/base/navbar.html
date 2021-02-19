@@ -21,14 +21,17 @@
           <button class="btn btn-outline-success" type="submit">Add</button>
         </form>
         <!-- gitrepo test -->
-        <a href="/github/repo-detail/338748989">repo</a>
+        <a href="/github/repo-detail/2">repo</a>
         <!-- right-side -->
         <div class='d-flex'>
           {% if user.is_authenticated %}
           <li class="nav-item dropdown me-3">
             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-              <img class="profile-img" src="{{ user.gitinuser.profile_img.url }}" alt="{{ user.gitinuser.profilename }}'s profile image">
-              <!-- {{ user.gitinuser.profilename }} -->
+              {% if user.profile_img %}
+              <img class="profile-img" src="{{ user.profile_img.url }}" alt="{{ user.username }}'s profile image">
+              {% else %}
+              {{ user.email }}
+              {% endif %}
             </a>
             <ul class="dropdown-menu profile-dropdown" aria-labelledby="navbarDropdown">
               <li><a class="dropdown-item" href="#">Profile</a></li>

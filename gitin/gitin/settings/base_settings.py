@@ -23,7 +23,8 @@ INSTALLED_APPS = [
     'allauth.socialaccount.providers.twitter',
     
     # my apps
-    'accounts',
+    'users',
+    # 'accounts',
     'profiles',
     'gitAPI',
 ]
@@ -57,6 +58,10 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'gitin.wsgi.application'
+
+
+## User Model
+AUTH_USER_MODEL = 'users.CustomUser'
 
 
 ## Password validation

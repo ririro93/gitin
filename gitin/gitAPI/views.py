@@ -61,8 +61,9 @@ class CreateGithubRepo(View):
         commits_res = requests.get(commits_URL)
         commits_json = commits_res.json()
         print(f'for {repo.get("name")}')
-        # for each commit
-        for commit_json in commits_json:
+        
+        # for each commit  (testing -> just get 3 commits per repo)
+        for commit_json in commits_json[:3]:
             # format
             repo_connected = githubRepo
             commit = commit_json.get('commit')
@@ -115,7 +116,7 @@ class RepoDetailView(DetailView):
         """
         new_comment = RepoComment(
             content=request.POST.get('content'),
-            author=self.request.user.gitinuser,
+            author=self.request.user,
             repo_connected=self.get_object(),
         )
         new_comment.save()
