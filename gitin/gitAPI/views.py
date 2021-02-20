@@ -56,12 +56,14 @@ class SearchGithub(View):
             githubRepo, created = GithubRepo.objects.update_or_create(
                 name=repo.name,
                 owner=github_user,
-                description=repo.description,
                 created_at=repo.created_at + timedelta(hours=9),
-                pushed_at=repo.pushed_at + timedelta(hours=9),
-                homepage=repo.homepage,
-                number_of_commits=repo.get_commits().totalCount,  
                 path=repo.full_name,          
+                defaults={
+                    'description': repo.description,
+                    'pushed_at': repo.pushed_at + timedelta(hours=9),
+                    'homepage': repo.homepage,
+                    'number_of_commits': repo.get_commits().totalCount,  
+                }
             )
             if created:
                 print(f'{githubRepo} created!')

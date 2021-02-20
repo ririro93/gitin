@@ -30,7 +30,10 @@ class GithubRepo(models.Model):
     number_of_commits = models.IntegerField()
     path = models.CharField(max_length=300)
     
-    def get_number_of_comments(self):
+    def num_commits(self):
+        return RepoCommit.objects.filter(repo_connected=self).count()
+    
+    def num_comments(self):
         return RepoComment.objects.filter(repo_connected=self).count()
 
     def __str__(self):
