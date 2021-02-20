@@ -28,12 +28,17 @@
 <!-- GitIn login -->
 <section class="container">
   <div class="row">
-    <form class="col-4 offset-4 d-flex flex-column p-0" method='POST' action="." enctype="multipart/form-data">{% csrf_token %}
+    <form class="col-4 offset-4 d-flex flex-column p-0" method='POST' action="" enctype="multipart/form-data">
+      {% csrf_token %}
       <hr>
       
       {{ form.as_p }}
-      
-      <button type='submit' class='btn bg-primary text-white'>Login</button>
+      <!-- to redirect to previous page -->
+      {% if request.GET.next %}
+      <button type='submit' class="btn bg-primary text-white" name="next" value="{{ request.GET.next }}">Login</button>
+      {% else %}
+      <button type='submit' class="btn bg-primary text-white">Login</button>
+      {% endif %}
     </form>
   </div>
   <div class="row mt-3">

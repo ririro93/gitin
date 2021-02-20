@@ -24,7 +24,6 @@ INSTALLED_APPS = [
     
     # my apps
     'users',
-    # 'accounts',
     'profiles',
     'gitAPI',
 ]

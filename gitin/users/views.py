@@ -42,7 +42,8 @@ def login_view(request):
         # if valid login
         if user != None:
             login(request, user)
-            return redirect('/')
+            next_page = request.POST.get('next', '/')
+            return redirect(next_page)
         # if invalid
         else:
             pass
@@ -55,4 +56,5 @@ def login_view(request):
 
 def logout_view(request):
     logout(request)
-    return redirect(login_view)
+    next_page = request.GET.get('next', login_view)
+    return redirect(next_page)
