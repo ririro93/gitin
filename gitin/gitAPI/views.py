@@ -77,7 +77,7 @@ class SearchGithub(View):
     
 
 class RepoDetailView(View):    
-    def get(self, request, **kwargs):
+    def get(self, request, *args, **kwargs):
         # init
         context = {}
         try:
@@ -129,14 +129,17 @@ class RepoDetailView(View):
         """
         create new RepoComment
         """
+        githubRepo = GithubRepo.objects.filter(
+            pk=kwargs.get('pk')
+        )[0]
         new_comment = RepoComment(
             content=request.POST.get('content'),
             author=self.request.user,
-            repo_connected=self.get_object(),
+            repo_connected=githubRepo,
         )
         new_comment.save()
         # why return this?
-        return self.get(self, request, *args, **kwargs)
+        return self.get(request, *args, **kwargs)
     
     def create_repo_commits(self):
         # repo
