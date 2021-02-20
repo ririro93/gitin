@@ -1,9 +1,10 @@
 from django.db import models
+from django.contrib.auth import get_user_model
 
-from users.models import CustomUser
+User = get_user_model()
 
 class GithubUser(models.Model):
-    gitinuser = models.OneToOneField(CustomUser, on_delete=models.SET_NULL, null=True)
+    gitinuser = models.OneToOneField(User, on_delete=models.SET_NULL, null=True)
     username = models.CharField(max_length=20)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
@@ -41,7 +42,7 @@ class RepoComment(models.Model):
         on_delete=models.CASCADE,
     )
     author = models.ForeignKey(
-        CustomUser,
+        User,
         related_name='author',
         on_delete=models.CASCADE,
     )
@@ -65,8 +66,16 @@ class RepoCommit(models.Model):
     
     def __str__(self):
         return self.url
-    
 
-
-        
+class RepoContentFile(models.Model):
+    repo_connected = models.ForeignKey(
+        GithubRepo,
+        related_name='contents',
+        on_delete=models.CASCADE,
+    )
+    path = models.CharField(max_length=300)
+    content_type = models.CharField(max_length=200)
+    url = models.CharField(max_length=300)
     
+    def __str__(self):
+        return self.path

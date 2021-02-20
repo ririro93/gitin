@@ -3,19 +3,40 @@
 
 {% block content %}
 <!-- Repo -->
-<section>
+<section class="mb-5">
+  <h1>Repo Details</h1>
   <h2>pk: {{ object.pk }}</h2>
   <h2>name: {{ object.name }}</h2>
   <h2>owner: {{ object.owner }}</h2>
-  <h2>html_url: {{ object.html_url }}</h2>
   <h2>description: {{ object.description }}</h2>
-  <h2>created_at: {{ object.created_at }}</h2>
-  <h2>updated_at: {{ object.updated_at }}</h2>
-  <h2>pushed_at: {{ object.pushed_at }}</h2>
+  <h2>html_url: {{ object.html_url }}</h2>
+  <p>created_at: {{ object.created_at }}</p>
+  <p>updated_at: {{ object.updated_at }}</p>
+  <p>pushed_at: {{ object.pushed_at }}</p>
 </section>
-<!-- COMMENTS  -->
-<div id="comments_section">
 
+<!-- Commits -->
+<section class="mb-5">
+  <h1>Repo Commits</h1>
+ {% for commit in commits %}
+ <div class="text-primary">
+   {{ commit.author }}
+ </div>
+ <div class="text-muted">
+   {{ commit.commit.message}}
+ </div>
+ <div class="text-muted">
+   {{ commit.url}}
+ </div>
+ {% endfor %}
+</section>
+
+<!-- COMMENTS  -->
+<section id="comments_section">
+  <h1>Repo Comments</h1>
+  <!-- pluralize not working for 0 comments for some reason -->
+  <strong class="text-secondary">{{ object.get_number_of_comments }} Comment{{ object.get_number_of_comments|pluralize }}</strong>
+  <hr>
   {% if user.is_authenticated %}
   <form method="POST">
     {% csrf_token %}
@@ -27,10 +48,7 @@
   {% else %}
   <a class="btn btn-outline-info" href="{% url 'login' %}?next={{request.path}}">Log in to add a comment!</a><br>
   {% endif %}
-
   {% if comments %}
-  <strong class="text-secondary">{{ object.number_of_comments }} Comment{{ object.number_of_comments|pluralize }}</strong>
-  <hr>
   <ul>
     {% for comment in comments %}
     <li>           
@@ -40,7 +58,7 @@
           <small class="text-muted">{{ comment.updated }}</small>
         </span>
         <p>
-          {{ comment.content|safe }}
+          {{ comment.content }}
         </p>
       </div>
     </li>
@@ -50,5 +68,5 @@
     <strong class="text-secondary">No comments yet...</strong>
   {% endif %}
 
-</div>
+</section>
 {% endblock %}

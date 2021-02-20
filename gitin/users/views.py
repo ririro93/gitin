@@ -3,7 +3,6 @@ from django.contrib.auth import get_user_model
 from django.shortcuts import render, redirect
 
 from .forms import SignupForm, LoginForm
-from .models import CustomUser
 
 User = get_user_model()
 

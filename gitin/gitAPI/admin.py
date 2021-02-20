@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import GithubUser, GithubRepo, RepoComment, RepoCommit
+from .models import GithubUser, GithubRepo, RepoComment, RepoCommit, RepoContentFile
  
     
 @admin.register(GithubUser)
@@ -47,5 +47,13 @@ class RepoCommitAdmin(admin.ModelAdmin):
     list_display = (
         'repo_connected',
         'author',
+        'url'
+    )
+
+@admin.register(RepoContentFile)
+class RepoContentFileAdmin(admin.ModelAdmin):
+    list_display = (
+        'repo_connected',
+        'path',
         'url'
     )
