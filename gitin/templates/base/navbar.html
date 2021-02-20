@@ -16,13 +16,12 @@
           </li>
         </div>
         <!-- center -->
-        <a href="/github/add-new/">add new user or repo</a>
         <form class="d-flex" action="{% url 'search-github' %}" method="get">
-          <input class="form-control me-2" type="search" placeholder="User or Repo" aria-label="search-github" name="search_word">
+          <input class="form-control me-2" type="search" placeholder="User" aria-label="search-github" name="search_word">
           <button class="btn btn-outline-success" type="submit">Search</button>
         </form>
         <!-- gitrepo test -->
-        <a href="/github/repo-detail/2">repo</a>
+        <a href="/github/repo-detail/132">repo</a>
         <!-- right-side -->
         <div class='d-flex'>
           {% if user.is_authenticated %}

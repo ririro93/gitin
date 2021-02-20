@@ -8,7 +8,7 @@ from .views import (
 )
 
 urlpatterns = [
-    path('search-github', SearchGithub.as_view(), name='search-github'),
+    path('search-github/', SearchGithub.as_view(), name='search-github'),
+    path('search-github/<int:pk>/repo-detail/', RepoDetailView.as_view(), name='repo-detail'),
     path('add/repo-list/', RepoListView.as_view(), name='repo-list'),
-    path('repo-detail/<int:pk>/', RepoDetailView.as_view(), name='repo-detail'),
 ]

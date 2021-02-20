@@ -24,9 +24,10 @@ class GithubRepo(models.Model):
     owner = models.ForeignKey('GithubUser', on_delete=models.CASCADE)
     description = models.CharField(max_length=1000, blank=True, null=True)
     created_at = models.DateTimeField()
-    updated_at = models.DateTimeField()
     pushed_at = models.DateTimeField()
+    updated_at = models.DateTimeField(auto_now=True)
     homepage = models.CharField(max_length=200, blank=True, null=True)
+    number_of_commits = models.IntegerField()
     
     def get_number_of_comments(self):
         return RepoComment.objects.filter(repo_connected=self).count()

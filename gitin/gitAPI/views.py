@@ -2,6 +2,7 @@ import requests
 from pprint import pprint
 from github import Github
 from collections import deque
+from datetime import datetime, timedelta
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render
 from django.conf import settings as django_settings
@@ -21,14 +22,15 @@ class SearchGithub(View):
     
     def get(self, request):
         # GET request
-        self.search_word = request.GET.get('search_word')
+        search_word = request.GET.get('search_word')
         
         # if userObj exists -> create or update GithubUser and related GithubRepos
     # try:
-        userObj = self.github.get_user(self.search_word)
+        userObj = self.github.get_user(search_word)
         github_user = self.create_github_user(userObj)
         github_repos = self.create_github_repos(userObj, github_user)
         context = {
+            'search_word': search_word,
             'github_user': github_user,
             'github_repos': github_repos,
         }
@@ -47,29 +49,31 @@ class SearchGithub(View):
         return github_user
     
     def create_github_repos(self, userObj, github_user):
-        # init
-        results = []
-        
         # get repos
         repos = userObj.get_repos()
-        print(repos)
-        # for each repo reate or update GithubRepo
-        for repo in repos:
-            # create or update GithubRepo
-            githubRepo, created = GithubRepo.objects.update_or_create(
-                name=repo.name,
-                owner=github_user,
-                description=repo.description,
-                created_at=repo.created_at,
-                updated_at=repo.updated_at,
-                pushed_at=repo.pushed_at,
-                homepage=repo.homepage            
-            )
-            if created:
-                print(f'{githubRepo} created!')
-            else:
-                print(f'{githubRepo} updated!')
-            results.append(githubRepo)
+        
+        # # for each repo reate or update GithubRepo
+        # for repo in repos:
+        #     # create or update GithubRepo -> time is UTC based
+        #     githubRepo, created = GithubRepo.objects.update_or_create(
+        #         name=repo.name,
+        #         owner=github_user,
+        #         description=repo.description,
+        #         created_at=repo.created_at + timedelta(hours=9),
+        #         pushed_at=repo.pushed_at + timedelta(hours=9),
+        #         homepage=repo.homepage,
+        #         number_of_commits=repo.get_commits().totalCount,            
+        #     )
+        #     if created:
+        #         print(f'{githubRepo} created!')
+        #     else:
+        #         print(f'{githubRepo} updated!')
+        
+        # order by updated_at
+        results = GithubRepo.objects.filter(
+            owner=github_user
+        ).order_by('-pushed_at')
+        
         return results
     
     def create_repo_commits(self, repo, githubRepo):
