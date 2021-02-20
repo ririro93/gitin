@@ -19,15 +19,14 @@
 <section class="mb-5">
   <h1>Repo Commits</h1>
  {% for commit in commits %}
- <div class="text-primary">
-   {{ commit.author }}
- </div>
- <div class="text-muted">
-   {{ commit.commit.message}}
- </div>
- <div class="text-muted">
-   {{ commit.url}}
- </div>
+ <div>
+   <div class="text-primary">
+     {{ commit.author }} 
+    </div>
+    <div class="text-muted">
+      {{ commit.message}}
+    </div>
+  </div>
  {% endfor %}
 </section>
 
@@ -35,7 +34,7 @@
 <section class="mb-5">
   <h1>Repo Contents</h1>
   {% for content in contents %}
-  <div class="text-primary">
+  <div class="{% if content.content_type == 'dir' %} text-primary {% else %} text-secondary {% endif %}">
     {{ content.path}}
     <a href="{{ content.url }}">link</a>
   </div>

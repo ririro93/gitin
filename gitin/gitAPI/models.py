@@ -28,6 +28,7 @@ class GithubRepo(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
     homepage = models.CharField(max_length=200, blank=True, null=True)
     number_of_commits = models.IntegerField()
+    path = models.CharField(max_length=300)
     
     def get_number_of_comments(self):
         return RepoComment.objects.filter(repo_connected=self).count()
@@ -60,12 +61,12 @@ class RepoCommit(models.Model):
         on_delete=models.CASCADE,
     )
     author = models.CharField(max_length=200, blank=True, null=True)
-    commit = models.JSONField()
+    message = models.CharField(max_length=200)
     url = models.CharField(max_length=300)
-    # probably should add commited time
-    
+    committed_at = models.DateTimeField()
+        
     def __str__(self):
-        return self.url
+        return self.message
 
 class RepoContentFile(models.Model):
     repo_connected = models.ForeignKey(

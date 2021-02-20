@@ -15,18 +15,16 @@ from .forms import CommentForm
 
 G_TOKEN = django_settings.GITHUB_TOKEN
 G_USERNAME = django_settings.GITHUB_USERNAME
+github = Github(G_TOKEN)
 
 class SearchGithub(View):    
-    def __init__(self):
-        self.github = Github(G_TOKEN)
-    
     def get(self, request):
         # GET request
         search_word = request.GET.get('search_word')
         
         # if userObj exists -> create or update GithubUser and related GithubRepos
     # try:
-        userObj = self.github.get_user(search_word)
+        userObj = github.get_user(search_word)
         github_user = self.create_github_user(userObj)
         github_repos = self.create_github_repos(userObj, github_user)
         context = {
@@ -52,22 +50,23 @@ class SearchGithub(View):
         # get repos
         repos = userObj.get_repos()
         
-        # # for each repo reate or update GithubRepo
-        # for repo in repos:
-        #     # create or update GithubRepo -> time is UTC based
-        #     githubRepo, created = GithubRepo.objects.update_or_create(
-        #         name=repo.name,
-        #         owner=github_user,
-        #         description=repo.description,
-        #         created_at=repo.created_at + timedelta(hours=9),
-        #         pushed_at=repo.pushed_at + timedelta(hours=9),
-        #         homepage=repo.homepage,
-        #         number_of_commits=repo.get_commits().totalCount,            
-        #     )
-        #     if created:
-        #         print(f'{githubRepo} created!')
-        #     else:
-        #         print(f'{githubRepo} updated!')
+        # for each repo reate or update GithubRepo
+        for repo in repos:
+            # create or update GithubRepo -> time is UTC based
+            githubRepo, created = GithubRepo.objects.update_or_create(
+                name=repo.name,
+                owner=github_user,
+                description=repo.description,
+                created_at=repo.created_at + timedelta(hours=9),
+                pushed_at=repo.pushed_at + timedelta(hours=9),
+                homepage=repo.homepage,
+                number_of_commits=repo.get_commits().totalCount,  
+                path=repo.full_name,          
+            )
+            if created:
+                print(f'{githubRepo} created!')
+            else:
+                print(f'{githubRepo} updated!')
         
         # order by updated_at
         results = GithubRepo.objects.filter(
@@ -76,99 +75,55 @@ class SearchGithub(View):
         
         return results
     
-    def create_repo_commits(self, repo, githubRepo):
-        """
-        get commits data and create RepoCommit objects
-        this only shows the most recent 30 commits
-        """
-        # get API
-        commits_URL = repo.get('commits_url').replace('{/sha}', '')
-        commits_res = requests.get(commits_URL, auth=(G_USERNAME, G_TOKEN))
-        commits_json = commits_res.json()
-        print(f'for {repo.get("name")}')
+
+class RepoDetailView(View):    
+    def get(self, request, **kwargs):
+        # init
+        context = {}
+        try:
+            updateRepo = request.GET.updateRepo     # add button to update repo
+        except:
+            updateRepo = False
+        print('###########')
+        print(updateRepo)
         
-        # for each commit  (testing -> just get 3 commits per repo)
-        for commit_json in commits_json[:3]:
-            # format
-            repo_connected = githubRepo
-            commit = commit_json.get('commit')
-            url = commit_json.get('url')
+        # add githubRepo to context
+        self.githubRepo = GithubRepo.objects.filter(
+            pk=kwargs.get('pk')
+        )[0]
+        context['object'] = self.githubRepo
+        
+        # if update update commits and contents
+        if updateRepo:
+            # create commits and add to context
+            context['commits'] = self.create_repo_commits()
             
-            # some commits had null as author..
-            try:
-                author = commit_json.get('author').get('login')
-            except:
-                author = 'unknown'
+            # update contents
+            self.delete_repo_content_files()
+            context['contents'] = self.create_repo_content_files()
+        else:
+            # add commits to context
+            commits_connected = RepoCommit.objects.filter(
+                repo_connected=self.githubRepo
+            )
+            context['commits'] = commits_connected
             
-            # create 
-            repo_commit, created = RepoCommit.objects.update_or_create(
-                repo_connected=repo_connected,
-                author=author,
-                commit=commit,
-                url=url,
+            # add contents to context
+            contents_connected = RepoContentFile.objects.filter(
+                repo_connected=self.githubRepo
             )
-            if created:
-                print(f'{repo_commit} added to db')
-
-    def delete_repo_content_files(self, repo, githubRepo):     
-        repoContentFiles = repoContentFiles.objects.filter(
-            repo_connected=githubRepo
-        ).delete()  
-        print(f"{githubRepo}'s RepoContentFiles deleted")
-    
-    def create_repo_content_files(self, repo, githubRepo): 
-        # repo
-        repo_name = self.username + '/' + repo.get('name')
-        repo = self.g.get_repo(repo_name)
+            context['contents'] = contents_connected
+            
+            # add comments to context
+            comments_connected = RepoComment.objects.filter(
+                repo_connected=self.githubRepo
+            ).order_by('-updated')
+            context['comments'] = comments_connected
         
-        # contents
-        contents = deque(repo.get_contents(''))
-        
-        # create 
-        while contents:
-            curr_content = contents.popleft()
-            if curr_content.type == 'dir':
-                for next_content in repo.get_contents(curr_content.path)[::-1]:
-                    contents.appendleft(next_content)
-
-            # create regardless of file type
-            RepoContentFile.objects.create(
-                repo_connected=githubRepo,
-                path=curr_content.path,
-                content_type=curr_content.type,
-                url=curr_content.url,
-            )
-            print(curr_content.path, ' created')
-                
-
-class RepoListView(ListView):
-    template_name='githubrepo_list.html'
-    
-    def post(self, request, *args, **kwargs):
-        """
-        update or create GithubUser and all connected GithubRepos
-        """
-        new_github_user = GithubUser.objects.update_or_create(
-            username=request.POST.get('username')
-        )
-        self.create_github_repos(res, githubUser)
-    
-    def get_context_data(self, **kwargs):
-        """
-        add commits, contents, comments
-        """
-        context = super().get_context_data(**kwargs)
-
-        # # add repos
-        # repo_connected = GithubRepo.objects.filter(
-        #     owner=
-        # )
-        
-        print(context)
-        return context
-
-class RepoDetailView(DetailView):    
-    model = GithubRepo
+        # check this portion
+        if self.request.user.is_authenticated:
+            context['comment_form'] = CommentForm()
+        return render(request, 'gitAPI/githubrepo_detail.html', context)
     
     def post(self, request, *args, **kwargs):
         """
@@ -183,32 +138,57 @@ class RepoDetailView(DetailView):
         # why return this?
         return self.get(self, request, *args, **kwargs)
     
-    def get_context_data(self, **kwargs):
-        """
-        add commits, contents, comments
-        """
-        context = super().get_context_data(**kwargs)
-
-        # add contents to context
-        contents_connected = RepoContentFile.objects.filter(
-            repo_connected=self.get_object()
-        )
-        context['contents'] = contents_connected
-
-        # add commits to context
-        commits_connected = RepoCommit.objects.filter(
-            repo_connected=self.get_object()
-        )
-        context['commits'] = commits_connected
+    def create_repo_commits(self):
+        # repo
+        repo = github.get_repo(self.githubRepo.path)
         
-        # add comments to context
-        comments_connected = RepoComment.objects.filter(
-            repo_connected=self.get_object()
-        ).order_by('-updated')
-        context['comments'] = comments_connected
+        # commits
+        commits = repo.get_commits()
         
-        # check this portion
-        if self.request.user.is_authenticated:
-            # context['comment_form'] = CommentForm(instance=self.request.user)
-            context['comment_form'] = CommentForm()
-        return context
+        # create
+        qs = RepoCommit.objects.none()
+        for commit in commits:
+            repoCommit, created = RepoCommit.objects.get_or_create(
+                repo_connected=self.githubRepo,
+                author=commit.author.login,
+                message=commit.commit.message,
+                url=commit.url,
+                committed_at=commit.commit.committer.date + timedelta(hours=9),
+            )
+            if created:
+                print(f'new commit {commit.url} created!')
+            qs |= RepoCommit.objects.filter(pk=repoCommit.pk)
+        return qs
+
+    def delete_repo_content_files(self):     
+        RepoContentFile.objects.filter(
+            repo_connected=self.githubRepo
+        ).delete()  
+        print(f"{self.githubRepo}'s RepoContentFiles deleted")
+    
+    def create_repo_content_files(self): 
+        # repo
+        repo = github.get_repo(self.githubRepo.path)
+        
+        # contents
+        contents = deque(repo.get_contents(''))
+        
+        # create 
+        qs = RepoContentFile.objects.none()
+        while contents:
+            curr_content = contents.popleft()
+            if curr_content.type == 'dir':
+                for next_content in repo.get_contents(curr_content.path)[::-1]:
+                    contents.appendleft(next_content)
+
+            # create regardless of file type
+            repoContentFile, created = RepoContentFile.objects.get_or_create(
+                repo_connected=self.githubRepo,
+                path=curr_content.path,
+                content_type=curr_content.type,
+                url=curr_content.url,
+            )
+            print(curr_content.path, ' created')
+            qs |= RepoContentFile.objects.filter(pk=repoContentFile.pk)
+        return qs
+                
