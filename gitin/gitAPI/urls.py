@@ -2,11 +2,13 @@ from django.contrib import admin
 from django.urls import path, include
 
 from .views import (
-    CreateGithubRepo,
+    SearchGithub,
+    RepoListView,
     RepoDetailView,
 )
 
 urlpatterns = [
-    path('create-repo-info', CreateGithubRepo.as_view(), name='github'),
+    path('search-github', SearchGithub.as_view(), name='search-github'),
+    path('add/repo-list/', RepoListView.as_view(), name='repo-list'),
     path('repo-detail/<int:pk>/', RepoDetailView.as_view(), name='repo-detail'),
 ]

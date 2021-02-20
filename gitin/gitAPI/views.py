@@ -6,7 +6,8 @@ from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render
 from django.conf import settings as django_settings
 from django.views import View
-from django.views.generic import DetailView
+from django.views.generic import DetailView, ListView, CreateView
+from django.views.generic.edit import FormMixin
 
 from .models import GithubUser, GithubRepo, RepoComment, RepoCommit, RepoContentFile
 from .forms import CommentForm
@@ -14,56 +15,62 @@ from .forms import CommentForm
 G_TOKEN = django_settings.GITHUB_TOKEN
 G_USERNAME = django_settings.GITHUB_USERNAME
 
-class CreateGithubRepo(View):
-    """
-    http://127.0.0.1:8000/github/get-repo-info/?username=ririro93
-    여기서 repo이름/commits 들어가면 모든 commit 다 볼 수 있음
-    -> commit 수 비례 사이즈 크게 보여주고 싶음
-    https://api.github.com/repos/ririro93/algorithm_probs/commits
-    """
+class SearchGithub(View):    
+    def __init__(self):
+        self.github = Github(G_TOKEN)
+    
     def get(self, request):
-        # use PyGithub library
-        self.g = Github(G_TOKEN)
-        self.username = request.GET.get('username')
-        
         # GET request
-        username = self.username
-        URL = f'https://api.github.com/users/{username}/repos'
-        res = requests.get(URL, auth=(G_USERNAME, G_TOKEN))
+        self.search_word = request.GET.get('search_word')
         
-        # if username exists -> create or update user and owned repos
-        if res.status_code == 200:
-            self.create_github_user(res, username)
-        return JsonResponse({'githubData' : res.json()}, status = 200)
+        # if userObj exists -> create or update GithubUser and related GithubRepos
+    # try:
+        userObj = self.github.get_user(self.search_word)
+        github_user = self.create_github_user(userObj)
+        github_repos = self.create_github_repos(userObj, github_user)
+        context = {
+            'github_user': github_user,
+            'github_repos': github_repos,
+        }
+        return render(request, 'gitAPI/search_github.html', context)
+    # except:
+        
     
-    # there should be a better way to implement these two methods without them being connected
-    def create_github_user(self, res, username):
-        githubUser, created = GithubUser.objects.update_or_create(
-            username=username
+    def create_github_user(self, userObj):
+        github_user, created = GithubUser.objects.update_or_create(
+            username=userObj.login
         )
-        self.create_github_repos(res, githubUser)
+        if created:
+            print(f'{github_user} created!')
+        else:
+            print(f'{github_user} updated!')
+        return github_user
     
-    def create_github_repos(self, res, githubUser):
-        # get GithubRepo field names
-        github_repo_fields = list(map(lambda x: x.name, GithubRepo._meta.fields))
-        repos = res.json()
+    def create_github_repos(self, userObj, github_user):
+        # init
+        results = []
         
-        # for each repo
+        # get repos
+        repos = userObj.get_repos()
+        print(repos)
+        # for each repo reate or update GithubRepo
         for repo in repos:
             # create or update GithubRepo
             githubRepo, created = GithubRepo.objects.update_or_create(
-                **{key: val for key, val in repo.items() if key in github_repo_fields and key not in ['id', 'owner']},
-                owner=githubUser
+                name=repo.name,
+                owner=github_user,
+                description=repo.description,
+                created_at=repo.created_at,
+                updated_at=repo.updated_at,
+                pushed_at=repo.pushed_at,
+                homepage=repo.homepage            
             )
             if created:
-                print(f'{githubRepo} added to db')
-
-            # create RepoCommits
-            self.create_repo_commits(repo, githubRepo)
-            
-            # delete former RepoContentFiles and create new
-            # self.delete_repo_content_files(repo, githubRepo)
-            self.create_repo_content_files(repo, githubRepo)
+                print(f'{githubRepo} created!')
+            else:
+                print(f'{githubRepo} updated!')
+            results.append(githubRepo)
+        return results
     
     def create_repo_commits(self, repo, githubRepo):
         """
@@ -99,7 +106,6 @@ class CreateGithubRepo(View):
             if created:
                 print(f'{repo_commit} added to db')
 
-
     def delete_repo_content_files(self, repo, githubRepo):     
         repoContentFiles = repoContentFiles.objects.filter(
             repo_connected=githubRepo
@@ -131,14 +137,52 @@ class CreateGithubRepo(View):
             print(curr_content.path, ' created')
                 
 
-class AddGithubView():
-    pass
-        
-class RepoDetailView(DetailView):
+class RepoListView(ListView):
+    template_name='githubrepo_list.html'
     
-    model = GithubRepo
+    def post(self, request, *args, **kwargs):
+        """
+        update or create GithubUser and all connected GithubRepos
+        """
+        new_github_user = GithubUser.objects.update_or_create(
+            username=request.POST.get('username')
+        )
+        self.create_github_repos(res, githubUser)
     
     def get_context_data(self, **kwargs):
+        """
+        add commits, contents, comments
+        """
+        context = super().get_context_data(**kwargs)
+
+        # # add repos
+        # repo_connected = GithubRepo.objects.filter(
+        #     owner=
+        # )
+        
+        print(context)
+        return context
+
+class RepoDetailView(DetailView):    
+    model = GithubRepo
+    
+    def post(self, request, *args, **kwargs):
+        """
+        create new RepoComment
+        """
+        new_comment = RepoComment(
+            content=request.POST.get('content'),
+            author=self.request.user,
+            repo_connected=self.get_object(),
+        )
+        new_comment.save()
+        # why return this?
+        return self.get(self, request, *args, **kwargs)
+    
+    def get_context_data(self, **kwargs):
+        """
+        add commits, contents, comments
+        """
         context = super().get_context_data(**kwargs)
 
         # add contents to context
@@ -163,18 +207,4 @@ class RepoDetailView(DetailView):
         if self.request.user.is_authenticated:
             # context['comment_form'] = CommentForm(instance=self.request.user)
             context['comment_form'] = CommentForm()
-        print(context)
         return context
-    
-    def post(self, request, *args, **kwargs):
-        """
-        create new RepoComment
-        """
-        new_comment = RepoComment(
-            content=request.POST.get('content'),
-            author=self.request.user,
-            repo_connected=self.get_object(),
-        )
-        new_comment.save()
-        # why return this?
-        return self.get(self, request, *args, **kwargs)

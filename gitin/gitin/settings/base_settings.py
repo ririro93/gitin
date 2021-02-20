@@ -91,7 +91,7 @@ USE_L10N = True
 
 
 # should be changed False for local time
-USE_TZ = True
+USE_TZ = False
 
 
 ## Static files (CSS, JavaScript, Images)

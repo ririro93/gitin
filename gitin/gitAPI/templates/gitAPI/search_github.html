@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<h1>Seach Github Results</h1>
+<h2>{{ github_user }}</h2>
+
+{% for github_repo in github_repos %}
+<section>
+  <h3>{{ github_repo.name }}</h3>
+  <div>{{ github_repo.description }}</div>
+  <div class="text-muted">{{ github_repo.created_at }}</div>
+  <div class="text-muted">{{ github_repo.updated_at }}</div>
+  <div class="text-muted">{{ github_repo.pushed_at }}</div>
+</section>
+{% endfor %}
+
+{% endblock %}

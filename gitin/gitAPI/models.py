@@ -22,7 +22,6 @@ class GithubUser(models.Model):
 class GithubRepo(models.Model):
     name = models.CharField(max_length=200)
     owner = models.ForeignKey('GithubUser', on_delete=models.CASCADE)
-    html_url = models.CharField(max_length=100)
     description = models.CharField(max_length=1000, blank=True, null=True)
     created_at = models.DateTimeField()
     updated_at = models.DateTimeField()
