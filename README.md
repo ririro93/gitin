@@ -55,6 +55,7 @@
 
 - [ ] db
     - [ ] migrate to postgres
+    - [ ] button on RepoDetailView page to update db
 
 - [ ] features
     - [ ] follow other people
@@ -150,7 +151,7 @@ Learned
 
 Problem
 - GET request to github's API for commits only gives 30 recent commits -> find way to get all commits
-- found out that there is a 5000 API request limit per hour per ip address -> adding all 30 most recent commits per repo maybe too costly
+- found out that there is a 5000 API request limit per hour per ip address -> adding all 30 most recent commits per repo maybe too costly -> 5000 was enough was only using 60 because of no authentication -> used access token to raise limit
 
 ## References
 (1) [medium post](https://whizzoe.medium.com/in-5-mins-set-up-google-login-to-sign-up-users-on-django-e71d5c38f5d5) : google login <br>
