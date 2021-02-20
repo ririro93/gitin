@@ -31,6 +31,17 @@
  {% endfor %}
 </section>
 
+<!-- Contents -->
+<section class="mb-5">
+  <h1>Repo Contents</h1>
+  {% for content in contents %}
+  <div class="text-primary">
+    {{ content.path}}
+    <a href="{{ content.url }}">link</a>
+  </div>
+  {% endfor %}
+</section>
+
 <!-- COMMENTS  -->
 <section id="comments_section">
   <h1>Repo Comments</h1>

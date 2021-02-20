@@ -130,7 +130,10 @@ class CreateGithubRepo(View):
             )
             print(curr_content.path, ' created')
                 
-                
+
+class AddGithubView():
+    pass
+        
 class RepoDetailView(DetailView):
     
     model = GithubRepo
@@ -138,17 +141,23 @@ class RepoDetailView(DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        # add comments to context
-        comments_connected = RepoComment.objects.filter(
+        # add contents to context
+        contents_connected = RepoContentFile.objects.filter(
             repo_connected=self.get_object()
-        ).order_by('-updated')
-        context['comments'] = comments_connected
+        )
+        context['contents'] = contents_connected
 
         # add commits to context
         commits_connected = RepoCommit.objects.filter(
             repo_connected=self.get_object()
         )
         context['commits'] = commits_connected
+        
+        # add comments to context
+        comments_connected = RepoComment.objects.filter(
+            repo_connected=self.get_object()
+        ).order_by('-updated')
+        context['comments'] = comments_connected
         
         # check this portion
         if self.request.user.is_authenticated:
