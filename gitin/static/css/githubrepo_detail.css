@@ -13,6 +13,7 @@ ul, li {
 .caret {
   cursor: pointer;
   user-select: none; /* Prevent text selection */
+  color: #198754
 }
 
 /* Create the caret/arrow with a unicode, and style it */

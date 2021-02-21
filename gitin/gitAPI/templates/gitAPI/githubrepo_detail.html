@@ -37,7 +37,10 @@
 <!-- Contents to the left -->
 <aside class="mb-5 file-tree">
   <h1>Repo Contents</h1>
-  <div class="root-dir">
+  <div>
+    <span class="caret caret-down root-span text-primary"></span>
+    <ul class="nested active root-dir">
+    </ul>
   </div>
 </aside>
 
@@ -83,11 +86,15 @@
 
 <script>
 ///////////////////////////////////////////////////////// 
-// select elements
-const rootDir = document.querySelector(".root-dir");
-
 // get file tree contents
 const contentFiles = {{ contents|safe }};
+
+// select roots and name span
+const rootSpan = document.querySelector(".root-span");
+const rootDir = document.querySelector(".root-dir");
+
+rootSpan.innerHTML = "{{ object.name|safe }}";
+
 
 // make new dom elements with file contents data
 contentFiles.forEach(contentfile => {
@@ -120,10 +127,36 @@ contentFiles.forEach(contentfile => {
     
     // if type is file
   } else {
-    const newFile = document.createElement("li", {className: "file"});
-    
-    newFile.id = contentPath.replace;
+    const newFile = document.createElement("li");
+    const icon = document.createElement("i");
+
+    newFile.id = contentPath;
     newFile.innerHTML = contentName;
+    icon.classList.add("me-2");
+
+    // choose icon shape depending on file extension
+    console.log(contentName);
+    if (contentName.search(".py") != -1) {
+      icon.classList.add("fab", "fa-python");
+    } else if (contentName.search(".md") != -1) {
+      icon.classList.add("fas", "fa-info", "ms-1");
+    } else if (contentName.search(".gitignore") != -1) {
+      icon.classList.add("fab", "fa-git-alt");
+    } else if (contentName.search(".txt") != -1) {
+      icon.classList.add("fas", "fa-align-left");
+    } else if (contentName.search(".html") != -1) {
+      icon.classList.add("fab", "fa-html5");
+    } else if (contentName.search(".js") != -1) {
+      icon.classList.add("fab", "fa-js-square");
+    } else if (contentName.search(".css") != -1) {
+      icon.classList.add("fab", "fa-css3-alt");
+    } else {
+      icon.classList.add("fas", "fa-file-code");
+    }
+
+    
+
+    newFile.prepend(icon);
     parentDir.appendChild(newFile);
   }
 });
@@ -133,11 +166,11 @@ const togglers = [...document.getElementsByClassName("caret")];
 
 togglers.forEach(toggler => {
   toggler.addEventListener("click", (e) => {
-    console.log(e.target);
     e.target.parentElement.querySelector(".nested").classList.toggle("active");
     e.target.classList.toggle("caret-down");
   })
 });
 
 </script>
+
 {% endblock %}
