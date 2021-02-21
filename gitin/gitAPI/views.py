@@ -6,6 +6,7 @@ from datetime import datetime, timedelta
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render
 from django.conf import settings as django_settings
+from django.core import serializers
 from django.views import View
 from django.views.generic import DetailView, ListView, CreateView
 from django.views.generic.edit import FormMixin
@@ -87,7 +88,7 @@ class RepoDetailView(View):
         except:
             updateRepo = False
         print('###########')
-        print(updateRepo)
+        print('update: ', updateRepo)
         
         # add githubRepo to context
         self.githubRepo = GithubRepo.objects.filter(
@@ -114,7 +115,8 @@ class RepoDetailView(View):
             contents_connected = RepoContentFile.objects.filter(
                 repo_connected=self.githubRepo
             )
-            context['contents'] = contents_connected
+            contents_json = serializers.serialize('json', contents_connected)
+            context['contents'] = contents_json
             
             # add comments to context
             comments_connected = RepoComment.objects.filter(
@@ -189,6 +191,7 @@ class RepoDetailView(View):
             # create regardless of file type
             repoContentFile, created = RepoContentFile.objects.get_or_create(
                 repo_connected=self.githubRepo,
+                name=curr_content.name,
                 path=curr_content.path,
                 content_type=curr_content.type,
                 url=curr_content.url,

@@ -1,9 +1,13 @@
 {% extends "base.html" %}
 {% load static %}
 
+{% block base_head %}
+<link rel="stylesheet" href="{% static 'css/githubrepo_detail.css' %}">
+{% endblock %}
+
 {% block content %}
 <!-- Repo -->
-<section class="mb-5">
+<!-- <section class="mb-5">
   <h1>Repo Details</h1>
   <h2>pk: {{ object.pk }}</h2>
   <h2>name: {{ object.name }}</h2>
@@ -13,10 +17,10 @@
   <p>created_at: {{ object.created_at }}</p>
   <p>updated_at: {{ object.updated_at }}</p>
   <p>pushed_at: {{ object.pushed_at }}</p>
-</section>
+</section> -->
 
 <!-- Commits -->
-<section class="mb-5">
+<!-- <section class="mb-5">
   <h1>Repo Commits</h1>
  {% for commit in commits %}
  <div>
@@ -28,21 +32,17 @@
     </div>
   </div>
  {% endfor %}
-</section>
+</section> -->
 
-<!-- Contents -->
-<section class="mb-5">
+<!-- Contents to the left -->
+<aside class="mb-5 file-tree">
   <h1>Repo Contents</h1>
-  {% for content in contents %}
-  <div class="{% if content.content_type == 'dir' %} text-primary {% else %} text-secondary {% endif %}">
-    {{ content.path}}
-    <a href="{{ content.url }}">link</a>
+  <div class="root-dir">
   </div>
-  {% endfor %}
-</section>
+</aside>
 
-<!-- COMMENTS  -->
-<section id="comments_section">
+<!-- COMMENTS to the right -->
+<aside id="comments_section">
   <h1>Repo Comments</h1>
   <!-- pluralize not working for 0 comments for some reason -->
   <strong class="text-secondary">{{ object.get_number_of_comments }} Comment{{ object.get_number_of_comments|pluralize }}</strong>
@@ -78,5 +78,66 @@
     <strong class="text-secondary">No comments yet...</strong>
   {% endif %}
 
-</section>
+</aside>
+
+
+<script>
+///////////////////////////////////////////////////////// 
+// select elements
+const rootDir = document.querySelector(".root-dir");
+
+// get file tree contents
+const contentFiles = {{ contents|safe }};
+
+// make new dom elements with file contents data
+contentFiles.forEach(contentfile => {
+  const contentType = contentfile.fields.content_type;
+  const contentName = contentfile.fields.name;
+  const contentPath = contentfile.fields.path.replaceAll("/", "-");
+  
+  const contentParentId = contentPath.slice(0, contentPath.length - contentName.length);
+  let parentDir = rootDir;
+  
+  // if not in root dir
+  if (contentParentId) {
+    parentDir = document.querySelector(`#${contentParentId.slice(0, contentParentId.length-1)}`);
+  }
+  
+  // if type is directory 
+  if (contentType == "dir") {
+    const newDirLi = document.createElement("li");
+    const newDirSpan = document.createElement("span");
+    const newDirUl = document.createElement("ul");
+    
+    newDirSpan.classList.add("caret");
+    newDirSpan.innerHTML = contentName;
+    newDirUl.classList.add("nested");
+    newDirUl.id = contentPath;
+
+    newDirLi.appendChild(newDirSpan);
+    newDirLi.appendChild(newDirUl);
+    parentDir.appendChild(newDirLi);
+    
+    // if type is file
+  } else {
+    const newFile = document.createElement("li", {className: "file"});
+    
+    newFile.id = contentPath.replace;
+    newFile.innerHTML = contentName;
+    parentDir.appendChild(newFile);
+  }
+});
+
+// toggle effect
+const togglers = [...document.getElementsByClassName("caret")];
+
+togglers.forEach(toggler => {
+  toggler.addEventListener("click", (e) => {
+    console.log(e.target);
+    e.target.parentElement.querySelector(".nested").classList.toggle("active");
+    e.target.classList.toggle("caret-down");
+  })
+});
+
+</script>
 {% endblock %}

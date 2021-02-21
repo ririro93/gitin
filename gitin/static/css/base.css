@@ -4,6 +4,7 @@ body {
 
 .my-navbar {
   height: 6vh;
+  
 }
 
 .profile-dropdown {
@@ -12,5 +13,5 @@ body {
 
 .profile-img {
   height: 4.5vh;
-  /* width: 4vh; */
+  border-radius: 50%;
 }

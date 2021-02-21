@@ -77,6 +77,7 @@ class RepoContentFile(models.Model):
         related_name='contents',
         on_delete=models.CASCADE,
     )
+    name = models.CharField(max_length=200)
     path = models.CharField(max_length=300)
     content_type = models.CharField(max_length=200)
     url = models.CharField(max_length=300)

@@ -39,6 +39,8 @@
     - [ ] repo view
         - [ ] basic view
         - [ ] commenting section
+        - [ ] contents section
+            - [x] tree view
 
 - [ ] back-end
     - [x] get repo data from github API

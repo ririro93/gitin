@@ -1,4 +1,4 @@
-<nav class="navbar navbar-expand-lg navbar-light bg-light my-navbar mb-5">
+<nav class="navbar navbar-expand-lg navbar-light bg-light my-navbar mb-5 sticky-top">
   <div class="container-fluid">
     <a class="navbar-brand" href="/">Gitin</a>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -29,9 +29,8 @@
             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
               {% if user.profile_img %}
               <img class="profile-img" src="{{ user.profile_img.url }}" alt="{{ user.username }}'s profile image">
-              {% else %}
-              {{ user.email }}
               {% endif %}
+              {{ user.email }}
             </a>
             <ul class="dropdown-menu profile-dropdown" aria-labelledby="navbarDropdown">
               <li><a class="dropdown-item" href="#">Profile</a></li>
