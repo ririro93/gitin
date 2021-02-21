@@ -19,79 +19,76 @@
   <div class="row h-100">
 
     <!-- Contents (left) -->
-    <aside class="explorer-aside col-3 position-fixed ms-3">
-      <h3 class="mb-4">Explorer</h3>
+    <aside class="explorer-aside col-2 position-fixed ms-3">
+      <h4 class="mb-4">Explorer</h4>
       <div class="explorer-div">
-        <span class="caret caret-down root-span text-primary"></span>
+        <span class="caret caret-down root-span"></span>
         <ul class="nested active root-dir">
         </ul>
       </div>
     </aside>
     
     <!-- File Content (center)-->
-    <section class="offset-3 col-6 file-contents-section">
-      <h3 class="text-left file-name mb-4">Loading REAMDE file</h3>
+    <section class="offset-2 col-7 file-contents-section">
+      <h4 class="text-left file-name mb-4">Loading REAMDE file</h4>
       <pre><code class="file-contents-code"></code></pre>
     </section>
     
-    <!-- Commits (right)-->
-    <section class="commits-section d-none">
-      <h1 class="mb-2">Repo Commits</h1>
-      {% for commit in commits %}
-      <div>
-        <div class="text-primary">
-          {{ commit.author }} 
+    <!-- Comments (right) -->
+    <section class="comments-section position-fixed offset-9 col-3 pe-5">
+      <!-- pluralize not working for 0 comments for some reason -->
+      <strong class="text-light">{{ object.num_comments }} Comment{{ object.num_comments|pluralize }}</strong>
+      {% if comments %}
+      <ul class="comments-ul">
+        {% for comment in comments %}
+        <li>           
+          <div>
+            <span class="d-flex justify-content-between">
+              <strong class="text-muted">{{ comment.author }} </strong>
+              <small class="text-muted">{{ comment.updated }}</small>
+            </span>
+            <div class="comment-div px-3">
+              {{ comment.content }}
+            </div>
+          </div>
+        </li>
+        {% endfor %}
+      </ul>
+      {% else %}
+      <strong class="text-secondary">No comments yet...</strong>
+      {% endif %}
+      {% if user.is_authenticated %}
+      <form method="POST">
+        {% csrf_token %}
+        <div class="form-group">
+          {{ comment_form }}
         </div>
-        <div class="text-muted">
-          {{ commit.message}}
-        </div>
-      </div>
-      {% endfor %}
+      </form>
+      {% else %}
+      <a class="btn btn-outline-info" href="{% url 'login' %}?next={{request.path}}">Log in to add a comment!</a><br>
+      {% endif %}
     </section>
   </div>
+
+  <!-- Commits (right)-->
+  <section class="commits-section d-none">
+    <h1 class="mb-2">Repo Commits</h1>
+    {% for commit in commits %}
+    <div>
+      <div class="text-primary">
+        {{ commit.author }} 
+      </div>
+      <div class="text-muted">
+        {{ commit.message}}
+      </div>
+    </div>
+    {% endfor %}
+  </section>
+
 </main>
-  
-<!-- Comments (bottom) -->
-<hr>
-<section class="comments-section">
-  <!-- pluralize not working for 0 comments for some reason -->
-  <strong class="text-secondary">{{ object.num_comments }} Comment{{ object.num_comments|pluralize }}</strong>
-  {% if user.is_authenticated %}
-  <form method="POST">
-    {% csrf_token %}
-    <div class="form-group">
-      {{ comment_form }}
-      <button class="btn btn-primary" type="submit">Add comment</button>
-    </div>
-  </form>
-  {% else %}
-  <a class="btn btn-outline-info" href="{% url 'login' %}?next={{request.path}}">Log in to add a comment!</a><br>
-  {% endif %}
-  {% if comments %}
-  <ul>
-    {% for comment in comments %}
-    <li>           
-      <div>
-        <span>
-        <strong class="text-primary">{{ comment.author }} </strong>
-        <small class="text-muted">{{ comment.updated }}</small>
-      </span>
-      <p>
-        {{ comment.content }}
-      </p>
-    </div>
-  </li>
-  {% endfor %}
-</ul>
-{% else %}
-  <strong class="text-secondary">No comments yet...</strong>
-{% endif %}
-</section>
 
-
+<!-- My scripts -->
 <script>
-///////////////////////////////////////////////////////// 
-
 // get data from backend
 const contentFiles = {{ contents|safe }};
 const repoPath = "{{ repo_path|safe }}";
@@ -110,6 +107,7 @@ contentFiles.forEach(contentfile => {
   const contentName = contentfile.fields.name;
   const contentSha = contentfile.fields.sha;
   const contentPath = contentfile.fields.path.replaceAll("/", "-");
+  let ishtmlFile = false;
   
   const contentParentId = contentPath.slice(0, contentPath.length - contentName.length);
   let parentDir = rootDir;
@@ -156,6 +154,7 @@ contentFiles.forEach(contentfile => {
       icon.classList.add("fas", "fa-align-left");
     } else if (contentName.search(".html") != -1) {
       icon.classList.add("fab", "fa-html5");
+      ishtmlFile = true;
     } else if (contentName.search(".js") != -1) {
       icon.classList.add("fab", "fa-js-square");
       fileContentsCode.classList.add("js");
@@ -168,7 +167,7 @@ contentFiles.forEach(contentfile => {
     // add click event listener for ajax request
     newFile.addEventListener("click", e => {
       fileNameDiv.innerHTML = contentName;
-      sendPostRequest(contentSha);
+      sendPostRequest(contentSha, ishtmlFile);
       addViewingClass(e.target);
     });
 
@@ -203,15 +202,21 @@ togglers.forEach(toggler => {
 
 
 // Send Ajax File Request to Backend and display contents
-function sendPostRequest(contentSha) {
+function sendPostRequest(contentSha, ishtmlFile) {
   $.ajax({
     url: 'get-file/',
     type: 'post',
     data: {'sha': contentSha, 'repo_path': repoPath},
     headers: { "X-CSRFToken": "{{ csrf_token }}"},
   }).done(data => {
-    console.log('data: ', data);
-    fileContentsCode.innerHTML = data.data;
+    console.log('data successfully received: ', data);
+    // change < and > if html file
+    if (ishtmlFile) {
+      fileContents = data.data.replaceAll(/&/g, '&amp;').replaceAll(/</g, '&lt;').replaceAll(/>/g, '&gt;');
+    } else {
+      fileContents = data.data;
+    }
+    fileContentsCode.innerHTML = fileContents;
     hightlightCode();
   }).fail((failed) => {
     console.log('ajax request failed');
@@ -222,18 +227,17 @@ function sendPostRequest(contentSha) {
 // highlight the file user is viewing
 function addViewingClass(targetFile) {
   const fileLists = document.querySelectorAll(".file");
-  console.log(fileLists);
   fileLists.forEach(fileList => {
     fileList.classList.remove("viewing");
   })
   targetFile.classList.add("viewing");
 }
 
-// syntax highlighting
+// syntax highlighting + line numbering
 function hightlightCode() {
   document.querySelectorAll('pre code').forEach((block) => {
-    console.log("highlighting now");
     hljs.highlightBlock(block);
+    hljs.lineNumbersBlock(block);
   });
 }
 
