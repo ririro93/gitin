@@ -1,10 +1,11 @@
 body {
   min-height: 100vh;
+  font-family: 'Poppins', sans-serif;
 }
 
 .my-navbar {
   height: 6vh;
-  
+
 }
 
 .profile-dropdown {

@@ -6,50 +6,56 @@
 {% endblock %}
 
 {% block content %}
-<!-- Repo -->
-<!-- <section class="mb-5">
-  <h1>Repo Details</h1>
-  <h2>pk: {{ object.pk }}</h2>
-  <h2>name: {{ object.name }}</h2>
-  <h2>owner: {{ object.owner }}</h2>
-  <h2>description: {{ object.description }}</h2>
-  <h2>html_url: {{ object.html_url }}</h2>
-  <p>created_at: {{ object.created_at }}</p>
-  <p>updated_at: {{ object.updated_at }}</p>
+<!-- summary of repo (top) -->
+<!-- <header class="d-flex justify-content-between">
+  <p>name: {{ object.name }}</p>
+  <p>owner: {{ object.owner }}</p>
+  <p>description: {{ object.description }}</p>
   <p>pushed_at: {{ object.pushed_at }}</p>
-</section> -->
+</header> -->
 
-<!-- Commits -->
-<!-- <section class="mb-5">
-  <h1>Repo Commits</h1>
- {% for commit in commits %}
- <div>
-   <div class="text-primary">
-     {{ commit.author }} 
-    </div>
-    <div class="text-muted">
-      {{ commit.message}}
-    </div>
+<!-- main -->
+<main class="container-fluid main-container d-flex flex-column">
+  <div class="row h-100">
+
+    <!-- Contents (left) -->
+    <aside class="explorer-aside col-3 position-fixed">
+      <h3>Explorer</h3>
+      <div>
+        <span class="caret caret-down root-span text-primary"></span>
+        <ul class="nested active root-dir">
+        </ul>
+      </div>
+    </aside>
+    
+    <!-- File Content (center)-->
+    <section class="offset-3 col-9 file-contents-section">
+      <h1>File Contents</h1>
+      <pre class="file-contents-pre"></pre>
+    </section>
+    
+    <!-- Commits (right)-->
+    <section class="commits-section d-none">
+      <h1>Repo Commits</h1>
+      {% for commit in commits %}
+      <div>
+        <div class="text-primary">
+          {{ commit.author }} 
+        </div>
+        <div class="text-muted">
+          {{ commit.message}}
+        </div>
+      </div>
+      {% endfor %}
+    </section>
   </div>
- {% endfor %}
-</section> -->
-
-<!-- Contents to the left -->
-<aside class="mb-5 file-tree">
-  <h1>Repo Contents</h1>
-  <div>
-    <span class="caret caret-down root-span text-primary"></span>
-    <ul class="nested active root-dir">
-    </ul>
-  </div>
-</aside>
-
-<!-- COMMENTS to the right -->
-<aside id="comments_section">
-  <h1>Repo Comments</h1>
+</main>
+  
+<!-- Comments (bottom) -->
+<hr>
+<section class="comments-section">
   <!-- pluralize not working for 0 comments for some reason -->
-  <strong class="text-secondary">{{ object.get_number_of_comments }} Comment{{ object.get_number_of_comments|pluralize }}</strong>
-  <hr>
+  <strong class="text-secondary">{{ object.num_comments }} Comment{{ object.num_comments|pluralize }}</strong>
   {% if user.is_authenticated %}
   <form method="POST">
     {% csrf_token %}
@@ -65,33 +71,34 @@
   <ul>
     {% for comment in comments %}
     <li>           
-     <div>
+      <div>
         <span>
-          <strong class="text-primary">{{ comment.author }} </strong>
-          <small class="text-muted">{{ comment.updated }}</small>
-        </span>
-        <p>
-          {{ comment.content }}
-        </p>
-      </div>
-    </li>
-    {% endfor %}
-  </ul>
-  {% else %}
-    <strong class="text-secondary">No comments yet...</strong>
-  {% endif %}
-
-</aside>
+        <strong class="text-primary">{{ comment.author }} </strong>
+        <small class="text-muted">{{ comment.updated }}</small>
+      </span>
+      <p>
+        {{ comment.content }}
+      </p>
+    </div>
+  </li>
+  {% endfor %}
+</ul>
+{% else %}
+  <strong class="text-secondary">No comments yet...</strong>
+{% endif %}
+</section>
 
 
 <script>
 ///////////////////////////////////////////////////////// 
-// get file tree contents
+// get data from backend
 const contentFiles = {{ contents|safe }};
+const repoPath = "{{ repo_path|safe }}";
 
-// select roots and name span
+// select elements
 const rootSpan = document.querySelector(".root-span");
 const rootDir = document.querySelector(".root-dir");
+const fileContentsPre = document.querySelector(".file-contents-pre");
 
 rootSpan.innerHTML = "{{ object.name|safe }}";
 
@@ -100,6 +107,7 @@ rootSpan.innerHTML = "{{ object.name|safe }}";
 contentFiles.forEach(contentfile => {
   const contentType = contentfile.fields.content_type;
   const contentName = contentfile.fields.name;
+  const contentSha = contentfile.fields.sha;
   const contentPath = contentfile.fields.path.replaceAll("/", "-");
   
   const contentParentId = contentPath.slice(0, contentPath.length - contentName.length);
@@ -135,7 +143,6 @@ contentFiles.forEach(contentfile => {
     icon.classList.add("me-2");
 
     // choose icon shape depending on file extension
-    console.log(contentName);
     if (contentName.search(".py") != -1) {
       icon.classList.add("fab", "fa-python");
     } else if (contentName.search(".md") != -1) {
@@ -154,8 +161,13 @@ contentFiles.forEach(contentfile => {
       icon.classList.add("fas", "fa-file-code");
     }
 
-    
+    // add click event listener for ajax request
+    newFile.addEventListener("click", e => {
+      console.log(e);
+      sendPostRequest(contentSha);
+    });
 
+    // append new file to parent element
     newFile.prepend(icon);
     parentDir.appendChild(newFile);
   }
@@ -163,13 +175,29 @@ contentFiles.forEach(contentfile => {
 
 // toggle effect
 const togglers = [...document.getElementsByClassName("caret")];
-
 togglers.forEach(toggler => {
   toggler.addEventListener("click", (e) => {
     e.target.parentElement.querySelector(".nested").classList.toggle("active");
     e.target.classList.toggle("caret-down");
   })
 });
+
+
+// Send Ajax File Request to Backend and display contents
+function sendPostRequest(contentSha) {
+  $.ajax({
+    url: 'get-file/',
+    type: 'post',
+    data: {'sha': contentSha, 'repo_path': repoPath},
+    headers: { "X-CSRFToken": "{{ csrf_token }}"},
+  }).done(data => {
+    console.log('data: ', data);
+    fileContentsPre.innerHTML = data.data;
+  }).fail((failed) => {
+    console.log('ajax request failed');
+    console.log(failed);
+  })
+}
 
 </script>
 

@@ -48,13 +48,14 @@ class RepoCommitAdmin(admin.ModelAdmin):
     list_display = (
         'repo_connected',
         'author',
-        'url'
+        'url',
     )
 
 @admin.register(RepoContentFile)
 class RepoContentFileAdmin(admin.ModelAdmin):
     list_display = (
         'repo_connected',
+        'name',
         'path',
-        'url'
+        'url',
     )

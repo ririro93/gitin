@@ -1,4 +1,6 @@
 import requests
+import json
+import base64
 from pprint import pprint
 from github import Github
 from collections import deque
@@ -95,6 +97,8 @@ class RepoDetailView(View):
             pk=kwargs.get('pk')
         )[0]
         context['object'] = self.githubRepo
+        context['repo_path'] = self.githubRepo.path
+        
         
         # if update update commits and contents
         if updateRepo:
@@ -103,7 +107,9 @@ class RepoDetailView(View):
             
             # update contents
             self.delete_repo_content_files()
-            context['contents'] = self.create_repo_content_files()
+            contents_connected = self.create_repo_content_files()
+            contents_json = serializers.serialize('json', contents_connected)
+            context['contents'] = contents_json
         else:
             # add commits to context
             commits_connected = RepoCommit.objects.filter(
@@ -195,8 +201,26 @@ class RepoDetailView(View):
                 path=curr_content.path,
                 content_type=curr_content.type,
                 url=curr_content.url,
+                sha=curr_content.sha,
             )
             print(curr_content.path, ' created')
             qs |= RepoContentFile.objects.filter(pk=repoContentFile.pk)
         return qs
                 
+                
+class FileDetailView(View):
+    def post(self, request, *args, **kwargs):
+        # format requested data
+        data = request.POST.dict()
+        sha = data.get('sha')
+        repo_path = data.get('repo_path')
+        
+        # use Github API to get file contents and decode base64
+        repo = github.get_repo(repo_path)
+        file_contents = repo.get_git_blob(sha).content
+        decoded_file_contents = base64.b64decode(file_contents).decode('utf-8')
+        context = {
+            'data': decoded_file_contents,
+        }
+        
+        return HttpResponse(json.dumps(context), content_type='application/json')

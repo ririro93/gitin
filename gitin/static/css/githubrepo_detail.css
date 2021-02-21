@@ -1,3 +1,14 @@
+.main-container {
+  min-height: 60vh;
+}
+
+.explorer-aside,
+.file-contents-section,
+.commits-section {
+  font-weight: 300;
+  min-height: 100%;
+}
+
 /* Remove default bullets */
 ul, li {
   list-style-type: none;
