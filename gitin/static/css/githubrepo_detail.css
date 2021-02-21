@@ -2,6 +2,7 @@
   min-height: 60vh;
 }
 
+/* ###################### explorer ###################### */
 .explorer-aside,
 .file-contents-section,
 .commits-section {
@@ -11,6 +12,7 @@
 
 .explorer-div {
   z-index: 1;
+  font-size: 0.9rem;
 }
 
 /* Remove default bullets */
@@ -55,4 +57,41 @@ ul, li {
 
 .viewing {
   color: #198754
+}
+
+/* ###################### file contents ###################### */
+.file-name {
+  padding-left: 1rem;
+}
+.file-contents-code {
+  padding: 0;
+}
+
+/* for block of numbers */
+.hljs-ln-numbers {
+  text-align: right;
+  color: rgb(72, 72, 72);
+  vertical-align: top;
+  padding-right: 5px!important;  
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+/* for block of code */
+.hljs-ln-code {
+  padding-left: 10px!important;
+}
+
+/* ###################### Comments ###################### */
+.comments-ul {
+  padding: 0;
+}
+
+.comment-div {
+  background-color: rgb(72, 72, 72);
+  border-radius: 0.5rem;
 }

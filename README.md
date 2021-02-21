@@ -43,7 +43,7 @@
             - [ ] pressing comment can highlights specific section
         - [ ] contents section
             - [ ] markdown is highlighted like a python file for some reason
-            - [ ] html tags are shown like processed markdown file
+            - [x] html tags are shown like processed markdown file -> fixed
         - [ ] explorer
             - [ ] tree view
             - [ ] fold all feature
@@ -59,8 +59,8 @@
     - [ ] if user tries to sign in using a username that already exists on Github -> ask if same person
         - yes -> would you like to sign in using your github account?
         - no -> please choose a different username. 
-    - [ ] logout redirect to login page
-        - [ ] show logged out message
+    - [x] logout redirect to previous page
+    - [ ] show logged out message
 
 - [ ] db
     - [ ] migrate to postgres
