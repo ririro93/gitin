@@ -1,6 +1,8 @@
 body {
   min-height: 100vh;
   font-family: 'Poppins', sans-serif;
+  background-color: #1d1f21;
+  color: whitesmoke;
 }
 
 .my-navbar {
@@ -13,6 +15,6 @@ body {
 }
 
 .profile-img {
-  height: 4.5vh;
+  height: 4vh;
   border-radius: 50%;
 }

@@ -14,7 +14,6 @@
 - get used to git, django
 - research github api
 
-
 <br>
 
 ## Todos
@@ -37,10 +36,18 @@
     - [ ] home page
     - [ ] feeds
     - [ ] repo view
-        - [ ] basic view
+        - [x] basic view
+    - [ ] file view
         - [ ] commenting section
+            - [ ] comments for every file
+            - [ ] pressing comment can highlights specific section
         - [ ] contents section
-            - [x] tree view
+            - [ ] markdown is highlighted like a python file for some reason
+            - [ ] html tags are shown like processed markdown file
+        - [ ] explorer
+            - [ ] tree view
+            - [ ] fold all feature
+            - [ ] independent scrollbar
 
 - [ ] back-end
     - [x] get repo data from github API

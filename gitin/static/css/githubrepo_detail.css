@@ -9,6 +9,10 @@
   min-height: 100%;
 }
 
+.explorer-div {
+  z-index: 1;
+}
+
 /* Remove default bullets */
 ul, li {
   list-style-type: none;
@@ -29,7 +33,7 @@ ul, li {
 /* Create the caret/arrow with a unicode, and style it */
 .caret::before {
   content: "\25B6";
-  color: black;
+  color: #c5c8c6;
   display: inline-block;
   margin-right: 6px;
 }
