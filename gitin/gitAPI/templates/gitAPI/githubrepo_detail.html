@@ -16,26 +16,26 @@
 
 <!-- main -->
 <main class="container-fluid main-container d-flex flex-column">
-  <div class="row h-100">
+  <div class="row h-100 main-row">
 
-    <!-- Contents (left) -->
-    <aside class="explorer-aside col-2 position-fixed ms-3">
+    <!-- Explorer (left) -->
+    <nav class="explorer-nav col-2 sticky-top ps-4">
       <h4 class="mb-4">Explorer</h4>
       <div class="explorer-div">
         <span class="caret caret-down root-span"></span>
         <ul class="nested active root-dir">
         </ul>
       </div>
-    </aside>
+    </nav>
     
     <!-- File Content (center)-->
-    <section class="offset-2 col-7 file-contents-section">
+    <section class="col-7 file-contents-section">
       <h4 class="text-left file-name mb-4">Loading REAMDE file</h4>
       <pre><code class="file-contents-code"></code></pre>
     </section>
     
     <!-- Comments (right) -->
-    <section class="comments-section position-fixed offset-9 col-3 pe-5">
+    <section class="comments-section col-3 pe-5">
       <!-- pluralize not working for 0 comments for some reason -->
       <strong class="text-light">{{ object.num_comments }} Comment{{ object.num_comments|pluralize }}</strong>
       {% if comments %}
@@ -45,9 +45,10 @@
           <div>
             <span class="d-flex justify-content-between">
               <strong class="text-muted">{{ comment.author }} </strong>
-              <small class="text-muted">{{ comment.updated }}</small>
+              <small class="text-muted">to be added</small>
+              <!-- <small class="text-muted">{{ comment.updated }}</small> -->
             </span>
-            <div class="comment-div px-3">
+            <div class="comment-div px-2">
               {{ comment.content }}
             </div>
           </div>

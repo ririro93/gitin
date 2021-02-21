@@ -41,6 +41,7 @@
         - [ ] commenting section
             - [ ] comments for every file
             - [ ] pressing comment can highlights specific section
+            - [x] sticky-top not working
         - [ ] contents section
             - [ ] markdown is highlighted like a python file for some reason
             - [x] html tags are shown like processed markdown file -> fixed
