@@ -12,6 +12,7 @@
 /* Remove default bullets */
 ul, li {
   list-style-type: none;
+  cursor: pointer;
 }
 
 /* Remove margins and padding from the parent ul */
@@ -22,9 +23,7 @@ ul, li {
 
 /* Style the caret/arrow */
 .caret {
-  cursor: pointer;
   user-select: none; /* Prevent text selection */
-  color: #198754
 }
 
 /* Create the caret/arrow with a unicode, and style it */
@@ -48,4 +47,8 @@ ul, li {
 /* Show the nested list when the user clicks on the caret/arrow (with JavaScript) */
 .active {
   display: block;
+}
+
+.viewing {
+  color: #198754
 }

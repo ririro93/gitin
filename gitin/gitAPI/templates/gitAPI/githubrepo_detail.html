@@ -20,7 +20,7 @@
 
     <!-- Contents (left) -->
     <aside class="explorer-aside col-3 position-fixed">
-      <h3>Explorer</h3>
+      <h3 class="mb-4">Explorer</h3>
       <div>
         <span class="caret caret-down root-span text-primary"></span>
         <ul class="nested active root-dir">
@@ -30,13 +30,13 @@
     
     <!-- File Content (center)-->
     <section class="offset-3 col-9 file-contents-section">
-      <h1>File Contents</h1>
+      <h3 class="text-left file-name mb-4">Loading REAMDE file</h3>
       <pre class="file-contents-pre"></pre>
     </section>
     
     <!-- Commits (right)-->
     <section class="commits-section d-none">
-      <h1>Repo Commits</h1>
+      <h1 class="mb-2">Repo Commits</h1>
       {% for commit in commits %}
       <div>
         <div class="text-primary">
@@ -99,7 +99,7 @@ const repoPath = "{{ repo_path|safe }}";
 const rootSpan = document.querySelector(".root-span");
 const rootDir = document.querySelector(".root-dir");
 const fileContentsPre = document.querySelector(".file-contents-pre");
-
+const fileNameDiv = document.querySelector(".file-name");
 rootSpan.innerHTML = "{{ object.name|safe }}";
 
 
@@ -138,6 +138,7 @@ contentFiles.forEach(contentfile => {
     const newFile = document.createElement("li");
     const icon = document.createElement("i");
 
+    newFile.classList.add("file");
     newFile.id = contentPath;
     newFile.innerHTML = contentName;
     icon.classList.add("me-2");
@@ -163,15 +164,30 @@ contentFiles.forEach(contentfile => {
 
     // add click event listener for ajax request
     newFile.addEventListener("click", e => {
-      console.log(e);
+      fileNameDiv.innerHTML = contentName;
       sendPostRequest(contentSha);
+      addViewingClass(e.target);
     });
 
     // append new file to parent element
     newFile.prepend(icon);
     parentDir.appendChild(newFile);
+
+    // if file name is README.md show on screen
+    if (contentName === "README.md") {
+      console.log("README.md file exists");
+      fileNameDiv.innerHTML = contentName;
+      sendPostRequest(contentSha);
+      newFile.classList.add("viewing");
+    }
   }
+
 });
+
+// if no README.md file in project
+if (fileNameDiv.innerHTML != "README.md") {
+  fileNameDiv.innerHTML = "No README.md file in this project"
+}
 
 // toggle effect
 const togglers = [...document.getElementsByClassName("caret")];
@@ -197,6 +213,15 @@ function sendPostRequest(contentSha) {
     console.log('ajax request failed');
     console.log(failed);
   })
+}
+
+function addViewingClass(targetFile) {
+  const fileLists = document.querySelectorAll(".file");
+  console.log(fileLists);
+  fileLists.forEach(fileList => {
+    fileList.classList.remove("viewing");
+  })
+  targetFile.classList.add("viewing");
 }
 
 </script>
