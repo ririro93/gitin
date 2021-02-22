@@ -15,14 +15,15 @@
             <a class="nav-link" href="{% url 'admin:index' %}">Admin</a>
           </li>
         </div>
-        <!-- center -->
-        <form class="d-flex" action="{% url 'search-github' %}" method="get">
-          <input class="form-control me-2" type="search" placeholder="User" aria-label="search-github" name="search_word">
-          <button class="btn btn-outline-success" type="submit">Search</button>
-        </form>
-        <!-- gitrepo test -->
-        <a href="/github/search-github/8/repo-detail/">repo</a>
-        <!-- right-side -->
+
+        <!-- Search (center)-->
+        <input type="checkbox" id="check">
+        <div class="search-box">
+          <input id="search-input" type="text" placeholder="Search...">
+          <label for="check"><i class="fas fa-search search-icon"></i></label>
+        </div>
+
+        <!-- accounts (right) -->
         <div class='d-flex'>
           {% if user.is_authenticated %}
           <li class="nav-item dropdown me-3">
@@ -52,3 +53,36 @@
     </div>
   </div>
 </nav>
+
+<!-- Searchbar logics -->
+<script>
+// Grab elements
+const searchInput = document.querySelector("#search-input");
+
+// initiate search via ajax (wait 0.5s until user finishes typing)
+let timeout = null;
+searchInput.addEventListener("keyup", e => {
+  clearTimeout(timeout);
+  timeout = setTimeout(() => {
+    if (e.target.value) {
+      searchRequest(e.target.value);
+    }
+  }, 500);
+})
+
+// ajax request for searching db and github
+function searchRequest(search_word) {
+  console.log("seach for: ", search_word);
+  $.ajax({
+    url: '{% url "search-github" %}',
+    type: 'post',
+    data: {'search_word': search_word},
+    headers: {"X-CSRFToken": "{{ csrf_token }}"},
+  }).done(res => {
+    console.log(res);
+  }).fail(failed => {
+    console.log(failed);
+  })
+}
+
+</script>

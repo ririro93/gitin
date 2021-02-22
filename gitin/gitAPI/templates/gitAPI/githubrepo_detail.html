@@ -19,7 +19,7 @@
   <div class="row h-100 main-row">
 
     <!-- Explorer (left) -->
-    <nav class="explorer-nav col-2 sticky-top ps-4">
+    <nav class="explorer-nav col-3 ps-4">
       <h4 class="mb-4">Explorer</h4>
       <div class="explorer-div">
         <span class="caret caret-down root-span"></span>
@@ -29,7 +29,7 @@
     </nav>
     
     <!-- File Content (center)-->
-    <section class="col-7 file-contents-section">
+    <section class="col-6 file-contents-section">
       <h4 class="text-left file-name mb-4">Loading REAMDE file</h4>
       <pre><code class="file-contents-code"></code></pre>
     </section>
@@ -110,7 +110,7 @@ contentFiles.forEach(contentfile => {
   const contentPath = contentfile.fields.path.replaceAll("/", "-");
   let ishtmlFile = false;
   
-  const contentParentId = contentPath.slice(0, contentPath.length - contentName.length);
+  const contentParentId = contentPath.slice(0, contentPath.length - contentName.length).replace(".", "dot");
   let parentDir = rootDir;
   
   // if not in root dir
@@ -127,7 +127,7 @@ contentFiles.forEach(contentfile => {
     newDirSpan.classList.add("caret");
     newDirSpan.innerHTML = contentName;
     newDirUl.classList.add("nested");
-    newDirUl.id = contentPath;
+    newDirUl.id = contentPath.replace(".", "dot");
 
     newDirLi.appendChild(newDirSpan);
     newDirLi.appendChild(newDirUl);

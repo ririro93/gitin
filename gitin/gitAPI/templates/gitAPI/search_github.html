@@ -3,18 +3,17 @@
 
 {% block content %}
 <h1 class="text-center">Seach Results for {{ github_user }}</h1>
+<h1>test github_repo: {{ github_repo }}</h1>
 
 <!-- cards with repo summary -->
 <section class="container">
   <div class="row">
     {% for github_repo in github_repos %}
-    <a class="text-decoration-none col-12 col-lg-6 col-xl-4" href="{{ github_repo.pk }}/repo-detail/">
+    <a class="text-decoration-none col-12 col-lg-6" href="{{ github_repo.pk }}/repo-detail/">
       <div class="card my-2">
         <div class="card-body">
-          <div class="d-flex justify-content-between">
-            <h3 class="text-primary">{{ github_repo.name }}</h3>
-            <p class="text-muted text-end">{{ github_repo.number_of_commits }} commits</p>
-          </div>
+          <h3 class="text-primary">{{ github_repo.name }}</h3>
+          <p class="text-muted text-end">{{ github_repo.number_of_commits }} commits</p>
           {% if github_repo.description %}
           <p class="card-text text-dark">{{ github_repo.description }}</p>
           {% else %}

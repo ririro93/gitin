@@ -42,13 +42,15 @@
             - [ ] comments for every file
             - [ ] pressing comment can highlights specific section
             - [x] sticky-top not working
+            - [ ] 1 min ago facebook like timestamp
+                - [stackoverflow](https://stackoverflow.com/questions/3177836/how-to-format-time-since-xxx-e-g-4-minutes-ago-similar-to-stack-exchange-site/23259289#23259289)
         - [ ] contents section
             - [ ] markdown is highlighted like a python file for some reason
             - [x] html tags are shown like processed markdown file -> fixed
         - [ ] explorer
-            - [ ] tree view
+            - [x] tree view
             - [ ] fold all feature
-            - [ ] independent scrollbar
+            - [x] independent scrollbar
 
 - [ ] back-end
     - [x] get repo data from github API
@@ -160,8 +162,16 @@ Learned
 `[ririro93]`
 
 Problem
-- GET request to github's API for commits only gives 30 recent commits -> find way to get all commits
-- found out that there is a 5000 API request limit per hour per ip address -> adding all 30 most recent commits per repo maybe too costly -> 5000 was enough was only using 60 because of no authentication -> used access token to raise limit
+- [x]: GET request to github's API for commits only gives 30 recent commits -> find way to get all commits -> used Pygithub
+- [x]: found out that there is a 5000 API request limit per hour per ip address -> adding all 30 most recent commits per repo maybe too costly -> 5000 was enough was only using 60 because of no authentication -> used access token to raise limit
+
+### (02-22)
+`[ririro]`
+
+Learned
+- [CSS] use `white-space: nowrap` with `overflow-x: scroll` to get horizontal scrollbar
+
+<br>
 
 ## References
 (1) [medium post](https://whizzoe.medium.com/in-5-mins-set-up-google-login-to-sign-up-users-on-django-e71d5c38f5d5) : google login <br>

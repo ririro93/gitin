@@ -10,11 +10,12 @@
 .explorer-nav {
   font-weight: 300;
   height: 100%;
+  overflow-x: scroll;
   overflow-y: scroll;
+  white-space: nowrap;
 }
 
 .explorer-div {
-  z-index: 1;
   font-size: 0.9rem;
 }
 
@@ -68,6 +69,8 @@ ul, li {
   font-weight: 300;
   height: 100%;
   overflow-y: scroll;
+  overflow-x: scroll;
+  white-space: nowrap;
 }
 
 .file-name {
@@ -101,6 +104,8 @@ ul, li {
   font-weight: 300;
   height: 100%;
   overflow-y: scroll;
+  overflow-x: scroll;
+  white-space: nowrap;
 }
 
 .comments-ul {

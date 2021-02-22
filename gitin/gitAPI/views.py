@@ -21,22 +21,56 @@ G_USERNAME = django_settings.GITHUB_USERNAME
 github = Github(G_TOKEN)
 
 class SearchGithub(View):    
-    def get(self, request):
-        # GET request
-        search_word = request.GET.get('search_word')
+    def post(self, request, *args, **kwargs):
+        # POST request
+        search_word = request.POST.get('search_word')
         
-        # if userObj exists -> create or update GithubUser and related GithubRepos
-    # try:
-        userObj = github.get_user(search_word)
-        github_user = self.create_github_user(userObj)
-        github_repos = self.create_github_repos(userObj, github_user)
+        # check if user in db -> return None if not found
+        github_user = self.get_github_users(search_word)
+        
+        # check if repo in db -> return None if not found
+        github_repo = self.get_github_repos(search_word)
+        
+        # # check if user in github
+        # if not github_user:
+        #     github_user = self.create_github_user(search_word)
+        
+        # # check if repo in github
+        # if not github_repo:
+        #     github_repo = self.create_github_repos(search_word)
+        
+        # github_repo, repo_created = self.get_or_create_github_repo
+        # userObj = github.get_user(search_word)
+        # github_user, created = self.create_github_user(userObj)
+        # if created:
+        #     github_repos = self.create_github_repos(userObj, github_user)
+        # else:
+            
+        # context = {
+        #     'search_word': search_word,
+        #     'github_user': github_user,
+        #     'github_repos': github_repos,
+        # }
+        # serialize qs
+        github_user_json = serializers.serialize('json', github_user)
+        github_repo_json = serializers.serialize('json', github_repo)
         context = {
-            'search_word': search_word,
-            'github_user': github_user,
-            'github_repos': github_repos,
+            'github_user': github_user_json,
+            'github_repo': github_repo_json,
         }
-        return render(request, 'gitAPI/search_github.html', context)
-    # except:
+        return HttpResponse(json.dumps(context), content_type='application/json')
+    
+    def get_github_users(self, search_word):
+        github_users = GithubUser.objects.filter(
+            username__contains=search_word,
+        )
+        return github_users or None
+
+    def get_github_repos(self, search_word):
+        github_repos = GithubRepo.objects.filter(
+            name__contains=search_word,
+        )
+        return github_repos or None
         
     
     def create_github_user(self, userObj):
@@ -47,7 +81,7 @@ class SearchGithub(View):
             print(f'{github_user} created!')
         else:
             print(f'{github_user} updated!')
-        return github_user
+        return github_user, created
     
     def create_github_repos(self, userObj, github_user):
         # get repos
@@ -77,7 +111,6 @@ class SearchGithub(View):
         results = GithubRepo.objects.filter(
             owner=github_user
         ).order_by('-pushed_at')
-        
         return results
     
 
