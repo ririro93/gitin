@@ -29,7 +29,7 @@
           <li class="nav-item dropdown me-3">
             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
               {% if user.profile_img %}
-              <img class="profile-img" src="{{ user.profile_img.url }}" alt="{{ user.username }}'s profile image">
+              <img class="profile-img me-2" src="{{ user.profile_img.url }}" alt="{{ user.username }}'s profile image">
               {% endif %}
               {{ user.email }}
             </a>

@@ -24,65 +24,80 @@ class SearchGithub(View):
     def post(self, request, *args, **kwargs):
         # POST request
         search_word = request.POST.get('search_word')
+        print('## searching for: ', search_word)
         
         # check if user in db -> return None if not found
-        github_user = self.get_github_users(search_word)
+        exact_user, github_users = self.get_github_users(search_word)
         
         # check if repo in db -> return None if not found
-        github_repo = self.get_github_repos(search_word)
+        exact_repo, github_repos = self.get_github_repos(search_word)
         
-        # # check if user in github
-        # if not github_user:
-        #     github_user = self.create_github_user(search_word)
+        # if exact user not in db check with github API
+        if not exact_user and "/" not in search_word:
+            exact_user = self.create_github_user(search_word)
         
-        # # check if repo in github
-        # if not github_repo:
-        #     github_repo = self.create_github_repos(search_word)
+        # if search_word contains a / check with github API
         
-        # github_repo, repo_created = self.get_or_create_github_repo
-        # userObj = github.get_user(search_word)
-        # github_user, created = self.create_github_user(userObj)
-        # if created:
-        #     github_repos = self.create_github_repos(userObj, github_user)
-        # else:
-            
-        # context = {
-        #     'search_word': search_word,
-        #     'github_user': github_user,
-        #     'github_repos': github_repos,
-        # }
         # serialize qs
-        github_user_json = serializers.serialize('json', github_user)
-        github_repo_json = serializers.serialize('json', github_repo)
+        exact_user = self.serializeQs(exact_user)
+        exact_repo = self.serializeQs(exact_repo)
+        github_users = self.serializeQs(github_users)
+        github_repos = self.serializeQs(github_repos)
         context = {
-            'github_user': github_user_json,
-            'github_repo': github_repo_json,
+            'exact_user': exact_user,
+            'exact_repo': exact_repo,
+            'github_users': github_users,
+            'github_repos': github_repos,
         }
         return HttpResponse(json.dumps(context), content_type='application/json')
     
     def get_github_users(self, search_word):
+        # check for exact user in db
+        exact_user = GithubUser.objects.filter(username__iexact=search_word) or None
+
+        # seach for close matches and exclude exact match
         github_users = GithubUser.objects.filter(
-            username__contains=search_word,
-        )
-        return github_users or None
+            username__contains=search_word
+        ).exclude(
+            username__iexact=search_word
+        ) or None
+        
+        return exact_user, github_users
 
     def get_github_repos(self, search_word):
-        github_repos = GithubRepo.objects.filter(
-            name__contains=search_word,
-        )
-        return github_repos or None
+        # check for exact repo in db, consider path lookup also
+        exact_repo = GithubRepo.objects.filter(name__iexact=search_word) or None
+        if "/" in search_word:
+            exact_repo = GithubRepo.objects.filter(path__iexact=search_word) or None
+
         
-    
-    def create_github_user(self, userObj):
-        github_user, created = GithubUser.objects.update_or_create(
-            username=userObj.login
-        )
-        if created:
-            print(f'{github_user} created!')
-        else:
-            print(f'{github_user} updated!')
-        return github_user, created
-    
+        # seach for close matches and exclude exact match
+        github_repos = GithubRepo.objects.filter(
+            name__contains=search_word
+        ).exclude(
+            name__iexact=search_word
+        ) or None
+        if "/" in search_word:
+            github_repos = GithubRepo.objects.filter(
+                path__contains=search_word
+            ).exclude(
+                path__iexact=search_word
+            ) or None
+        return exact_repo, github_repos
+        
+    def create_github_user(self, search_word):
+        # use github API to see if username exists and create Github User
+        try: 
+            new_user = github.get_user(search_word)
+            GithubUser.objects.create(
+                username=new_user.login,
+            )
+            exact_user = GithubUser.objects.filter(username=new_user.login)
+        except: 
+            exact_user = None
+        print("## github search user result:", exact_user)
+        return exact_user
+
     def create_github_repos(self, userObj, github_user):
         # get repos
         repos = userObj.get_repos()
@@ -112,6 +127,11 @@ class SearchGithub(View):
             owner=github_user
         ).order_by('-pushed_at')
         return results
+    
+    def serializeQs(self, qs):
+        if qs:
+            return serializers.serialize('json', qs)
+        return None
     
 
 class RepoDetailView(View):    

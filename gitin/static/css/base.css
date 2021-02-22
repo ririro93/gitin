@@ -60,11 +60,6 @@ input[type="checkbox"]{
   /* box-shadow: -15px -15px 18px honeydew; */
 }
 
-.search-box input:focus {
-  /* box-shadow: -15px -15px 18px honeydew; */
-}
-
-
 #check:checked+.search-box {
   width: 25vw;
 }
@@ -79,9 +74,10 @@ input[type="checkbox"]{
 }
 
 .profile-img {
-  height: 4vh;
+  height: 3vh;
   border-radius: 50%;
 }
+
 /* ############### Scrollbar ############### */
 /* width */
 ::-webkit-scrollbar {
