@@ -25,6 +25,9 @@ class SearchGithub(View):
         """
         all the related methods below return a qs or None for consistency
         """
+        # init
+        self.max_num_items = 5
+        
         # POST request
         search_word = request.POST.get('search_word')
         print('## searching for: ', search_word)
@@ -65,7 +68,7 @@ class SearchGithub(View):
             username__contains=search_word
         ).exclude(
             username__iexact=search_word
-        ) or None
+        )[:self.max_num_items] or None
         
         print('## exact_user in db:', exact_user)
         return exact_user, github_users
@@ -81,13 +84,13 @@ class SearchGithub(View):
             name__contains=search_word
         ).exclude(
             name__iexact=search_word
-        ) or None
+        )[:self.max_num_items] or None
         if "/" in search_word:
             github_repos = GithubRepo.objects.filter(
                 path__contains=search_word
             ).exclude(
                 path__iexact=search_word
-            ) or None
+            )[:self.max_num_items] or None
         print('## exact_repo in db:', exact_repo)
         return exact_repo, github_repos
         

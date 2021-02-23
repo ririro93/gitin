@@ -20,8 +20,12 @@
         <input type="checkbox" id="check">
         <div class="search-box">
           <input id="search-input" type="text" placeholder="Search...">
-          <label for="check"><i class="fas fa-search search-icon"></i></label>
+          <label class="search-label" for="check"><i class="fas fa-search search-icon"></i></label>
         </div>
+        <div class="my-popover invisible">
+          <hr class="popover-hr">
+        </div>
+</button>
 
         <!-- accounts (right) -->
         <div class='d-flex'>
@@ -58,14 +62,47 @@
 <script>
 // Grab elements
 const searchInput = document.querySelector("#search-input");
+const myPopover = document.querySelector(".my-popover");
+const searchLabel = document.querySelector(".search-label");
+
+// clicking searchLabel focuses searchInput
+searchLabel.addEventListener("click", () => {
+  searchInput.focus();
+});
+
+// focus and focusout events on searchInput
+searchInput.addEventListener("focus", () => {
+  if (searchInput.value) {
+    myPopover.classList.add("show-popover");
+    myPopover.classList.remove("invisible");
+    searchInput.classList.add("input-with-popover");
+  }
+});
+
+searchInput.addEventListener("focusout", () => {
+  myPopover.classList.remove("show-popover");
+  myPopover.classList.add("invisible");
+  searchInput.classList.remove("input-with-popover");
+});
+
 
 // initiate search via ajax (wait 0.5s until user finishes typing)
 let timeout = null;
 searchInput.addEventListener("keyup", e => {
   clearTimeout(timeout);
   timeout = setTimeout(() => {
+    // delete all previous data in popover
+    [...document.querySelectorAll(".popover-items")].forEach(item => {
+      item.remove();
+    });
+
+    // if search_word != empty -> request search
     if (e.target.value) {
       searchRequest(e.target.value);
+    } else {
+      myPopover.classList.remove("show-popover");
+      myPopover.classList.add("invisible");
+      searchInput.classList.remove("input-with-popover");
     }
   }, 500);
 })
@@ -79,10 +116,83 @@ function searchRequest(search_word) {
     data: {'search_word': search_word},
     headers: {"X-CSRFToken": "{{ csrf_token }}"},
   }).done(res => {
-    console.log(res);
+    console.log("res:", res);
+    showSearchResults(res);
   }).fail(failed => {
     console.log(failed);
   })
+}
+
+function showSearchResults(res) {
+  console.log("show search results");
+  const exact_user = JSON.parse(res.exact_user);
+  const exact_repo = JSON.parse(res.exact_repo);
+  const github_users = JSON.parse(res.github_users);
+  const github_repos = JSON.parse(res.github_repos);
+
+  // show myPopover
+  myPopover.classList.add("show-popover");
+  myPopover.classList.remove("invisible");
+  searchInput.classList.add("input-with-popover");
+
+
+  // add data to popover
+  exact_user?.forEach(user => {
+    const userAnchor = document.createElement("a");
+    const userIcon = document.createElement("i");
+    const userDiv = document.createElement("div");
+
+    userAnchor.classList.add("popover-items");
+    userIcon.classList.add("fas", "fa-user", "m-3");
+    userDiv.innerHTML = user.fields.username;
+    
+    userAnchor.appendChild(userIcon);
+    userAnchor.appendChild(userDiv);
+    myPopover.appendChild(userAnchor);
+  });
+
+  github_users?.forEach(user => {
+    const userAnchor = document.createElement("a");
+    const userIcon = document.createElement("i");
+    const userDiv = document.createElement("div");
+
+    userAnchor.classList.add("popover-items");
+    userIcon.classList.add("fas", "fa-user", "m-3");
+    userDiv.innerHTML = user.fields.username;
+    
+    userAnchor.appendChild(userIcon);
+    userAnchor.appendChild(userDiv);
+    myPopover.appendChild(userAnchor);
+  });
+
+  exact_repo?.forEach(repo => {
+    const repoAnchor = document.createElement("a");
+    const repoIcon = document.createElement("i");
+    const repoDiv = document.createElement("div");
+
+    repoAnchor.classList.add("popover-items");
+    repoIcon.classList.add("fas", "fa-archive", "m-3");
+    repoDiv.innerHTML = repo.fields.path;
+    
+    repoAnchor.appendChild(repoIcon);
+    repoAnchor.appendChild(repoDiv);
+    myPopover.appendChild(repoAnchor);
+  });
+
+  github_repos?.forEach(repo => {
+    const repoAnchor = document.createElement("a");
+    const repoIcon = document.createElement("i");
+    const repoDiv = document.createElement("div");
+
+    repoAnchor.classList.add("popover-items");
+    repoIcon.classList.add("fas", "fa-archive", "m-3");
+    repoDiv.innerHTML = repo.fields.path;
+    
+    repoAnchor.appendChild(repoIcon);
+    repoAnchor.appendChild(repoDiv);
+    myPopover.appendChild(repoAnchor);
+  });
+
 }
 
 </script>
