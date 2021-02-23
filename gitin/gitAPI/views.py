@@ -151,6 +151,10 @@ class SearchGithub(View):
         return None
     
 
+class UserDetailView(View):    
+    def get(self, request, *args, **kwargs):
+        context = {'data': 'it works'}
+        return render(request, 'gitAPI/user_detail.html', context)
 class RepoDetailView(View):    
     def get(self, request, *args, **kwargs):
         # init
@@ -203,7 +207,7 @@ class RepoDetailView(View):
         # check this portion
         if self.request.user.is_authenticated:
             context['comment_form'] = CommentForm()
-        return render(request, 'gitAPI/githubrepo_detail.html', context)
+        return render(request, 'gitAPI/repo_detail.html', context)
     
     def post(self, request, *args, **kwargs):
         """

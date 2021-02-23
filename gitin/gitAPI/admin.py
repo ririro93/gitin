@@ -7,6 +7,7 @@ from .models import GithubUser, GithubRepo, RepoComment, RepoCommit, RepoContent
 class GithubUserAdmin(admin.ModelAdmin):
     date_hierarchy = 'updated'
     list_display = (
+        'pk',
         'username',
         'get_githubrepos',
         'created',

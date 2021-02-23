@@ -80,9 +80,11 @@ searchInput.addEventListener("focus", () => {
 });
 
 searchInput.addEventListener("focusout", () => {
-  myPopover.classList.remove("show-popover");
-  myPopover.classList.add("invisible");
-  searchInput.classList.remove("input-with-popover");
+  setTimeout(() => {
+    myPopover.classList.remove("show-popover");
+    myPopover.classList.add("invisible");
+    searchInput.classList.remove("input-with-popover");
+  }, 100);
 });
 
 
@@ -111,7 +113,7 @@ searchInput.addEventListener("keyup", e => {
 function searchRequest(search_word) {
   console.log("seach for: ", search_word);
   $.ajax({
-    url: '{% url "search-github" %}',
+    url: "{% url 'search' %}",
     type: 'post',
     data: {'search_word': search_word},
     headers: {"X-CSRFToken": "{{ csrf_token }}"},
@@ -142,6 +144,7 @@ function showSearchResults(res) {
     const userIcon = document.createElement("i");
     const userDiv = document.createElement("div");
 
+    userAnchor.href = "{% url 'user-detail' pk=0 %}".replace("0", user.pk);
     userAnchor.classList.add("popover-items");
     userIcon.classList.add("fas", "fa-user", "m-3");
     userDiv.innerHTML = user.fields.username;
@@ -156,6 +159,7 @@ function showSearchResults(res) {
     const userIcon = document.createElement("i");
     const userDiv = document.createElement("div");
 
+    userAnchor.href = "{% url 'user-detail' pk=0 %}".replace("0", user.pk);
     userAnchor.classList.add("popover-items");
     userIcon.classList.add("fas", "fa-user", "m-3");
     userDiv.innerHTML = user.fields.username;
@@ -169,7 +173,8 @@ function showSearchResults(res) {
     const repoAnchor = document.createElement("a");
     const repoIcon = document.createElement("i");
     const repoDiv = document.createElement("div");
-
+    
+    repoAnchor.href = "{% url 'repo-detail' pk=0 %}".replace("0", repo.pk);
     repoAnchor.classList.add("popover-items");
     repoIcon.classList.add("fas", "fa-archive", "m-3");
     repoDiv.innerHTML = repo.fields.path;
@@ -183,7 +188,8 @@ function showSearchResults(res) {
     const repoAnchor = document.createElement("a");
     const repoIcon = document.createElement("i");
     const repoDiv = document.createElement("div");
-
+    
+    repoAnchor.href = "{% url 'repo-detail' pk=0 %}".replace("0", repo.pk);
     repoAnchor.classList.add("popover-items");
     repoIcon.classList.add("fas", "fa-archive", "m-3");
     repoDiv.innerHTML = repo.fields.path;
