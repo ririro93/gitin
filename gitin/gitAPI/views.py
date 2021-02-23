@@ -22,6 +22,9 @@ github = Github(G_TOKEN)
 
 class SearchGithub(View):    
     def post(self, request, *args, **kwargs):
+        """
+        all the related methods below return a qs or None for consistency
+        """
         # POST request
         search_word = request.POST.get('search_word')
         print('## searching for: ', search_word)
@@ -32,11 +35,13 @@ class SearchGithub(View):
         # check if repo in db -> return None if not found
         exact_repo, github_repos = self.get_github_repos(search_word)
         
-        # if exact user not in db check with github API
-        if not exact_user and "/" not in search_word:
-            exact_user = self.create_github_user(search_word)
+        # no exact user in db -> check with github API
+        if (not exact_user) and ("/" not in search_word):
+            exact_user = self.update_or_create_github_user(search_word)
         
-        # if search_word contains a / check with github API
+        # no exact repo in db and there is possible repo name -> check with github API
+        if (not exact_repo) and ("/" in search_word) and (search_word.find("/") + 1 < len(search_word)):
+            exact_repo = self.update_or_create_github_repo(search_word)
         
         # serialize qs
         exact_user = self.serializeQs(exact_user)
@@ -62,6 +67,7 @@ class SearchGithub(View):
             username__iexact=search_word
         ) or None
         
+        print('## exact_user in db:', exact_user)
         return exact_user, github_users
 
     def get_github_repos(self, search_word):
@@ -70,7 +76,6 @@ class SearchGithub(View):
         if "/" in search_word:
             exact_repo = GithubRepo.objects.filter(path__iexact=search_word) or None
 
-        
         # seach for close matches and exclude exact match
         github_repos = GithubRepo.objects.filter(
             name__contains=search_word
@@ -83,50 +88,59 @@ class SearchGithub(View):
             ).exclude(
                 path__iexact=search_word
             ) or None
+        print('## exact_repo in db:', exact_repo)
         return exact_repo, github_repos
         
-    def create_github_user(self, search_word):
+    def update_or_create_github_user(self, search_word):
         # use github API to see if username exists and create Github User
         try: 
             new_user = github.get_user(search_word)
-            GithubUser.objects.create(
+            _, created = GithubUser.objects.update_or_create(
                 username=new_user.login,
             )
-            exact_user = GithubUser.objects.filter(username=new_user.login)
+            exact_user = GithubUser.objects.filter(username=new_user.login) # to get a qs
+            print('## Github user:', search_word)
+            print('## created:', created)
         except: 
             exact_user = None
         print("## github search user result:", exact_user)
-        return exact_user
+        return exact_user 
 
-    def create_github_repos(self, userObj, github_user):
-        # get repos
-        repos = userObj.get_repos()
+    def update_or_create_github_repo(self, search_word):
+        # check username in db and create if !exists
+        username = search_word[:search_word.find("/")]
+        exact_user = self.update_or_create_github_user(username)[0]
+        print('## create_github_repo -> exact_user:', exact_user)
         
-        # for each repo reate or update GithubRepo
-        for repo in repos:
-            # create or update GithubRepo -> time is UTC based
-            githubRepo, created = GithubRepo.objects.update_or_create(
-                name=repo.name,
-                owner=github_user,
-                created_at=repo.created_at + timedelta(hours=9),
-                path=repo.full_name,          
-                defaults={
-                    'description': repo.description,
-                    'pushed_at': repo.pushed_at + timedelta(hours=9),
-                    'homepage': repo.homepage,
-                    'number_of_commits': repo.get_commits().totalCount,  
-                }
-            )
-            if created:
-                print(f'{githubRepo} created!')
-            else:
-                print(f'{githubRepo} updated!')
-        
-        # order by updated_at
-        results = GithubRepo.objects.filter(
-            owner=github_user
-        ).order_by('-pushed_at')
-        return results
+        # time is UTC based
+        if exact_user:
+            # use github API to see if repo exists and create Github Repo
+            try:
+                repo = github.get_repo(search_word)
+                _, created = GithubRepo.objects.update_or_create(
+                    name=repo.name,
+                    owner=exact_user,
+                    created_at=repo.created_at + timedelta(hours=9),
+                    path=repo.full_name,          
+                    defaults={
+                        'description': repo.description,
+                        'pushed_at': repo.pushed_at + timedelta(hours=9),
+                        'homepage': repo.homepage,
+                        'number_of_commits': repo.get_commits().totalCount,  
+                    }
+                )
+                print('## repo from github created:', created)
+                exact_repo = GithubRepo.objects.filter(
+                    name=repo.name,
+                    owner=exact_user,
+                    path=repo.full_name,
+                )
+            except:
+                exact_repo = None
+        else:
+            exact_repo = None
+        print('## new repo added to db:', exact_repo)
+        return exact_repo
     
     def serializeQs(self, qs):
         if qs:

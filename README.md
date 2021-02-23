@@ -64,6 +64,8 @@
         - no -> please choose a different username. 
     - [x] logout redirect to previous page
     - [ ] show logged out message
+    - [ ] using github API's search might be better than using PyGithub get_user() and get_repo() methods
+        -[ ] this feature existed on PyGithub too.. 
 
 - [ ] db
     - [ ] migrate to postgres
