@@ -158,7 +158,7 @@ class UserDetailView(View):
         requested_user = GithubUser.objects.get(pk=user_pk)
         
         # get related repos from db
-        requested_repos = requested_user.get_githubrepos()
+        requested_repos = GithubRepo.objects.filter(owner=requested_user).order_by('-pushed_at')
 
         # if no repos in db
         if not requested_repos:
@@ -211,7 +211,7 @@ class UserDetailView(View):
                 print('## error:', error)
         requested_repos = GithubRepo.objects.filter(
             owner=requested_user
-        )
+        ).order_by('-pushed_at')
         return requested_repos
 class RepoDetailView(View):    
     def get(self, request, *args, **kwargs):
