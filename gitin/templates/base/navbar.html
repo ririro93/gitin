@@ -21,6 +21,8 @@
         <div class="search-box">
           <input id="search-input" type="text" placeholder="Search...">
           <label class="search-label" for="check"><i class="fas fa-search search-icon"></i></label>
+          <div class="x-icon invisible"><i class="fas fa-times-circle"></i></div>
+          <div class="spinner-icon invisible"><i class="fas fa-spinner fa-spin"></i></div>
         </div>
         <div class="my-popover invisible">
           <hr class="popover-hr">
@@ -60,10 +62,13 @@
 
 <!-- Searchbar logics -->
 <script>
+
 // Grab elements
 const searchInput = document.querySelector("#search-input");
 const myPopover = document.querySelector(".my-popover");
 const searchLabel = document.querySelector(".search-label");
+const xIconDiv = document.querySelector(".x-icon");
+const spinnerIcondiv = document.querySelector(".spinner-icon");
 
 // clicking searchLabel focuses searchInput
 searchLabel.addEventListener("click", () => {
@@ -78,8 +83,8 @@ searchInput.addEventListener("focus", () => {
     searchInput.classList.add("input-with-popover");
   }
 });
-
 searchInput.addEventListener("focusout", () => {
+  // use setTimeOut so a tag redirecting works for searched items
   setTimeout(() => {
     myPopover.classList.remove("show-popover");
     myPopover.classList.add("invisible");
@@ -87,10 +92,26 @@ searchInput.addEventListener("focusout", () => {
   }, 100);
 });
 
+// x-icon click event
+xIconDiv.addEventListener("click", () => {
+  searchInput.value = "";
+  myPopover.classList.remove("show-popover");
+  myPopover.classList.add("invisible");
+  searchInput.classList.remove("input-with-popover");
+  xIconDiv.classList.add("invisible");
+  spinnerIcondiv.classList.add("invisible");
+  searchLabel.classList.remove("invisible");
+})
 
 // initiate search via ajax (wait 0.5s until user finishes typing)
 let timeout = null;
 searchInput.addEventListener("keyup", e => {
+  // start spinner icon and remove search icon
+  xIconDiv.classList.add("invisible");
+  spinnerIcondiv.classList.remove("invisible");
+  searchLabel.classList.add("invisible");
+  
+  // clear timeout if change within 0.5s
   clearTimeout(timeout);
   timeout = setTimeout(() => {
     // delete all previous data in popover
@@ -105,6 +126,9 @@ searchInput.addEventListener("keyup", e => {
       myPopover.classList.remove("show-popover");
       myPopover.classList.add("invisible");
       searchInput.classList.remove("input-with-popover");
+      xIconDiv.classList.add("invisible");
+      spinnerIcondiv.classList.add("invisible");
+      searchLabel.classList.remove("invisible");
     }
   }, 500);
 })
@@ -136,6 +160,9 @@ function showSearchResults(res) {
   myPopover.classList.add("show-popover");
   myPopover.classList.remove("invisible");
   searchInput.classList.add("input-with-popover");
+  searchLabel.classList.add("invisible");
+  xIconDiv.classList.remove("invisible");
+  spinnerIcondiv.classList.add("invisible");
 
 
   // add data to popover
@@ -199,6 +226,16 @@ function showSearchResults(res) {
     myPopover.appendChild(repoAnchor);
   });
 
+  // if no results
+  if (!exact_user && !exact_repo && !github_users && !github_repos) {
+    console.log('no results');
+    const noResultsDiv = document.createElement("div");
+
+    noResultsDiv.innerHTML = "No results...";
+    noResultsDiv.classList.add("popover-items", "m-3");
+
+    myPopover.appendChild(noResultsDiv);
+  }
 }
 
 </script>

@@ -155,6 +155,7 @@ class UserDetailView(View):
     def get(self, request, *args, **kwargs):
         context = {'data': 'it works'}
         return render(request, 'gitAPI/user_detail.html', context)
+    
 class RepoDetailView(View):    
     def get(self, request, *args, **kwargs):
         # init
