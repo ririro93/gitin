@@ -1,26 +1,33 @@
 {% extends "base.html" %}
 {% load static %}
 
+{% block base_head %}
+<link rel="stylesheet" href="{% static 'css/user_detail.css' %}">
+{% endblock %}
+
 {% block content %}
-<h1 class="text-center">Seach Results for {{ github_user }}</h1>
-<h1>test github_repo: {{ github_repo }}</h1>
-<h1>{{ data }}</h1>
+<h1 class="text-center">
+  {{ requested_user }}'s repos 
+  <button class="btn repo-refresh text-success repo-refresh shadow-none ms-2"><i class="fas fa-sync-alt"></i></button>
+</h1>
 
 <!-- cards with repo summary -->
 <section class="container">
   <div class="row">
-    {% for github_repo in github_repos %}
-    <a class="text-decoration-none col-12 col-lg-6" href="{{ github_repo.pk }}/repo-detail/">
-      <div class="card my-2">
+    {% for requested_repo in requested_repos %}
+    <a class="text-decoration-none col-12 col-lg-6" href="{% url 'repo-detail' requested_repo.pk %}">
+      <div class="card my-2 repo-card">
         <div class="card-body">
-          <h3 class="text-primary">{{ github_repo.name }}</h3>
-          <p class="text-muted text-end">{{ github_repo.number_of_commits }} commits</p>
-          {% if github_repo.description %}
-          <p class="card-text text-dark">{{ github_repo.description }}</p>
+          <div class="d-flex justify-content-between mb-4">
+            <h3 class="text-primary card-text">{{ requested_repo.name }}</h3>
+            <p class="text-muted text-end card-text">{{ requested_repo.number_of_commits }} commits</p>
+          </div>
+          {% if requested_repo.description %}
+          <p class="card-text text-dark">{{ requested_repo.description }}</p>
           {% else %}
           <p class="card-text text-dark">No description</p>
           {% endif %}
-          <p class="card-text"><small class="text-muted">last pushed: {{ github_repo.pushed_at }}</small></p>
+          <p class="card-text"><small class="text-muted">last pushed: {{ requested_repo.pushed_at }}</small></p>
         </div>
       </div>
     </a>
@@ -28,4 +35,33 @@
   </div>
 </section>
 
+<script>
+// grab elements
+const repoRefresh = document.querySelector(".repo-refresh");
+
+// repoRefresh click event
+repoRefresh.addEventListener("click", () => {
+  // add animation
+  repoRefresh.classList.add("fa-spin")
+
+  // send request
+  sendGETRequest();
+})
+
+// send GET to update repos
+function sendGETRequest() {
+  $.ajax({
+    url: "{% url 'user-detail' pk=requested_user.pk %}",
+    type: 'post',
+    data: {'username': "{{ requested_user|safe }}"},
+    headers: {"X-CSRFToken": "{{ csrf_token }}"},
+  }).done(res => {
+    location.reload()
+  }).fail(failed => {
+    console.log(failed);
+  })
+
+}
+
+</script>
 {% endblock %}

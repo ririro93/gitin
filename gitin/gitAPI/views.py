@@ -153,9 +153,66 @@ class SearchGithub(View):
 
 class UserDetailView(View):    
     def get(self, request, *args, **kwargs):
-        context = {'data': 'it works'}
+        # get requested user data
+        user_pk = kwargs.get('pk')
+        requested_user = GithubUser.objects.get(pk=user_pk)
+        
+        # get related repos from db
+        requested_repos = requested_user.get_githubrepos()
+
+        # if no repos in db
+        if not requested_repos:
+            repos = self.get_repos_from_API(requested_user.username)
+            requested_repos = self.update_or_create_github_repos(requested_user, repos)
+        else:
+            print('## repo data from db')
+        context = {
+            'requested_user': requested_user,
+            'requested_repos': requested_repos,
+        }
         return render(request, 'gitAPI/user_detail.html', context)
     
+    def post(self, request, *args, **kwargs):
+        # get GithubUser
+        requested_username = request.POST.get('username')
+        requested_user = GithubUser.objects.get(username=requested_username)
+        
+        # update GithubRepos
+        repos = self.get_repos_from_API(requested_user.username)
+        requested_repos = self.update_or_create_github_repos(requested_user, repos)
+        print('## repos in db updated')
+        return HttpResponse(json.dumps({'response': 'db updated'}), content_type='application/json')
+
+
+    def get_repos_from_API(self, username):
+        print('## get_repos_from_API')
+        user = github.get_user(username)
+        repos = user.get_repos()
+        return repos
+    
+    def update_or_create_github_repos(self, requested_user, repos):
+        print('## update_or_create_github_repos')
+        for repo in repos:
+            try:
+                new_repo, created = GithubRepo.objects.update_or_create(
+                    name=repo.name,
+                    owner=requested_user,
+                    created_at=repo.created_at + timedelta(hours=9),
+                    path=repo.full_name,          
+                    defaults={
+                        'description': repo.description,
+                        'pushed_at': repo.pushed_at + timedelta(hours=9),
+                        'homepage': repo.homepage,
+                        'number_of_commits': repo.get_commits().totalCount,  
+                    }
+                )
+                print(new_repo, 'created', created)
+            except error:
+                print('## error:', error)
+        requested_repos = GithubRepo.objects.filter(
+            owner=requested_user
+        )
+        return requested_repos
 class RepoDetailView(View):    
     def get(self, request, *args, **kwargs):
         # init

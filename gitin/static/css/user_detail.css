@@ -1,0 +1,9 @@
+.repo-card {
+  height: 17vh;
+}
+
+.card-text {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
