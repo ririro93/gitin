@@ -6,13 +6,24 @@
 {% endblock %}
 
 {% block content %}
-<h1 class="text-center">
-  {{ requested_user }}'s repos 
-  <button class="btn repo-refresh text-success repo-refresh shadow-none ms-2"><i class="fas fa-sync-alt"></i></button>
-</h1>
+<!-- header -->
+<header class="text-center">
+  <h1>
+    {{ requested_user }}'s repos 
+  </h1>
+</header>
 
 <!-- cards with repo summary -->
 <section class="container">
+  <!-- last repo update time -->
+  <div class="d-flex justify-content-end align-items-center">
+    <div class="text-secondary me-3">
+      last updated at: {{ requested_user.last_repos_update }}
+    </div> 
+    <button class="btn repo-refresh text-success repo-refresh shadow-none p-0"><i class="fas fa-sync-alt"></i></button>
+  </div>
+
+  <!-- repo infos -->
   <div class="row">
     {% for requested_repo in requested_repos %}
     <a class="text-decoration-none col-12 col-lg-6" href="{% url 'repo-detail' requested_repo.pk %}">

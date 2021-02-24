@@ -12,6 +12,7 @@ from django.core import serializers
 from django.views import View
 from django.views.generic import DetailView, ListView, CreateView
 from django.views.generic.edit import FormMixin
+from django.utils import timezone
 
 from .models import GithubUser, GithubRepo, RepoComment, RepoCommit, RepoContentFile
 from .forms import CommentForm
@@ -173,9 +174,12 @@ class UserDetailView(View):
         return render(request, 'gitAPI/user_detail.html', context)
     
     def post(self, request, *args, **kwargs):
-        # get GithubUser
+        # get GithubUser and upate last_repos_update field
         requested_username = request.POST.get('username')
         requested_user = GithubUser.objects.get(username=requested_username)
+        requested_user.last_repos_update = timezone.now()
+        requested_user.save()
+        print('## last_repos_update updated for', requested_username, 'to', timezone.now())
         
         # update GithubRepos
         repos = self.get_repos_from_API(requested_user.username)

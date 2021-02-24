@@ -8,6 +8,7 @@ class GithubUser(models.Model):
     username = models.CharField(max_length=20)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
+    last_repos_update = models.DateTimeField()
     
     def get_githubrepos(self):
         """
