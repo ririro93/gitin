@@ -88,6 +88,10 @@
 
 </main>
 
+<!-- highlight.js (syntax highlighting + line numbering) -->
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/highlight.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/highlightjs-line-numbers.js@2.8.0/dist/highlightjs-line-numbers.min.js"></script>
+
 <!-- My scripts -->
 <script>
 // get data from backend
@@ -110,7 +114,7 @@ contentFiles.forEach(contentfile => {
   const contentPath = contentfile.fields.path.replaceAll("/", "-");
   let ishtmlFile = false;
   
-  const contentParentId = contentPath.slice(0, contentPath.length - contentName.length).replace(".", "dot");
+  const contentParentId = contentPath.slice(0, contentPath.length - contentName.length).replaceAll(".", "dot").replaceAll("_", "underscore");
   let parentDir = rootDir;
   
   // if not in root dir
@@ -127,7 +131,7 @@ contentFiles.forEach(contentfile => {
     newDirSpan.classList.add("caret");
     newDirSpan.innerHTML = contentName;
     newDirUl.classList.add("nested");
-    newDirUl.id = contentPath.replace(".", "dot");
+    newDirUl.id = contentPath.replaceAll(".", "dot").replaceAll("_", "underscore");
 
     newDirLi.appendChild(newDirSpan);
     newDirLi.appendChild(newDirUl);

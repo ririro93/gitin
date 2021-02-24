@@ -47,10 +47,14 @@
         - [ ] contents section
             - [ ] markdown is highlighted like a python file for some reason
             - [x] html tags are shown like processed markdown file -> fixed
+            - [ ] getting updated files takes too long
         - [ ] explorer
             - [x] tree view
             - [ ] fold all feature
             - [x] independent scrollbar
+            - [ ] does not work when Korean chars in id (when directory)
+                -> ex). assets-postunderscoreimages-2021-01-27-객체의 크기와 가비지컬렉터
+                -> because html elements cannot have Korean chars in their id
 
 - [ ] back-end
     - [x] get repo data from github API

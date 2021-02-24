@@ -174,11 +174,9 @@ class UserDetailView(View):
         return render(request, 'gitAPI/user_detail.html', context)
     
     def post(self, request, *args, **kwargs):
-        # get GithubUser and upate last_repos_update field
+        # get GithubUser
         requested_username = request.POST.get('username')
         requested_user = GithubUser.objects.get(username=requested_username)
-        requested_user.last_repos_update = timezone.now()
-        requested_user.save()
         print('## last_repos_update updated for', requested_username, 'to', timezone.now())
         
         # update GithubRepos
@@ -187,7 +185,6 @@ class UserDetailView(View):
         print('## repos in db updated')
         return HttpResponse(json.dumps({'response': 'db updated'}), content_type='application/json')
 
-
     def get_repos_from_API(self, username):
         print('## get_repos_from_API')
         user = github.get_user(username)
@@ -195,6 +192,9 @@ class UserDetailView(View):
         return repos
     
     def update_or_create_github_repos(self, requested_user, repos):
+        # upate last_repos_update field
+        requested_user.last_repos_update = timezone.now()
+        requested_user.save()
         print('## update_or_create_github_repos')
         for repo in repos:
             try:
@@ -217,6 +217,7 @@ class UserDetailView(View):
             owner=requested_user
         ).order_by('-pushed_at')
         return requested_repos
+
 class RepoDetailView(View):    
     def get(self, request, *args, **kwargs):
         # init
@@ -224,7 +225,7 @@ class RepoDetailView(View):
         try:
             updateRepo = request.GET.updateRepo     # add button to update repo
         except:
-            updateRepo = False
+            updateRepo = True
         print('###########')
         print('update: ', updateRepo)
         
@@ -238,8 +239,8 @@ class RepoDetailView(View):
         
         # if update update commits and contents
         if updateRepo:
-            # create commits and add to context
-            context['commits'] = self.create_repo_commits()
+            # # create commits and add to context
+            # context['commits'] = self.create_repo_commits()
             
             # update contents
             self.delete_repo_content_files()
