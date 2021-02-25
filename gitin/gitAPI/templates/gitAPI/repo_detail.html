@@ -6,55 +6,68 @@
 {% endblock %}
 
 {% block content %}
-<!-- summary of repo (top) -->
-<!-- <header class="d-flex justify-content-between">
-  <p>name: {{ object.name }}</p>
-  <p>owner: {{ object.owner }}</p>
-  <p>description: {{ object.description }}</p>
-  <p>pushed_at: {{ object.pushed_at }}</p>
-</header> -->
 
-<!-- main -->
-<main class="container-fluid main-container d-flex flex-column">
-  <div class="row h-100 main-row">
+<!-- content block -->
+<div class="main-container d-flex">
+  <!-- collapse button -->
+  <button class="btn collapse-btn p-0 shadow-none">
+    <i class="fas fa-angle-double-left"></i>
+  </button>
 
-    <!-- Explorer + Comments (left) -->
-    <section class="col-3">
-
-      <!-- Explorer (top) -->
-      <nav class="explorer-nav px-3" id="resizable">
-        <header class="d-flex justify-content-between align-items-center mb-4">
-          <h4 class="d-inline-block m-0">{{ object.path }}</h4>
-          <span>
-            <i class="far fa-minus-square"></i>
-          </span>
-        </header>
-        <div class="explorer-div">
-          <span class="caret caret-down root-span"></span>
-          <ul class="nested active root-dir">
-          </ul>
-        </div>
-      </nav>
-
-      <hr>
-      
-      <!-- Comments (bottom) -->
-      <section class="comments-section px-3">
-        <!-- pluralize not working for 0 comments for some reason -->
-        
-        <header class="d-flex justify-content-between align-items-center mb-4">
-          <h4 class="text-light m-0">{{ object.num_comments }} Comment{{ object.num_comments|pluralize }}</h4>
-          <span>
-            <i class="far fa-minus-square"></i>
-          </span>
-        </header>
-
-        {% if user.is_authenticated %}
-        <form method="POST" autocomplete="off" class="mb-4">
-          {% csrf_token %}
-          <div class="form-group">
-            {{ comment_form }}
+  <!-- main -->
+  <main class="container-fluid main-div d-flex flex-column py-3 px-0">
+    <!-- repo path -->
+    <header class="d-inline-block repo-path m-0 px-3 d-flex justify-content-between align-items-center">
+      <div class="d-flex invisible padding-right">
+        <div class="text-secondary me-3">
+          last updated at: {{ requested_user.last_repos_update }}
+        </div> 
+        <button class="btn repo-refresh text-success repo-refresh shadow-none p-0"><i class="fas fa-sync-alt"></i></button>
+      </div>
+      <h3 class="m-0">{{ object.path }}</h3>
+      <div class="d-flex padding-right">
+        <div class="text-secondary me-3">
+          last updated at: {{ requested_user.last_repos_update }}
+        </div> 
+        <button class="btn repo-refresh text-success repo-refresh shadow-none p-0"><i class="fas fa-sync-alt"></i></button>
+      </div>
+    </header>
+    
+    <div class="row h-100 w-100 main-row">
+      <!-- Explorer + Comments (left) -->
+      <aside class="col-3 side-tab">
+        <!-- Explorer (top) -->
+        <nav class="explorer-nav px-3" id="resizable">
+          <header class="d-flex justify-content-between align-items-center mb-4">
+            <h4 class="d-inline-block m-0">Explorer</h4>
+            <span>
+              <i class="far fa-minus-square"></i>
+            </span>
+          </header>
+          <div class="explorer-div">
+            <span class="caret caret-down root-span"></span>
+            <ul class="nested active root-dir">
+            </ul>
           </div>
+        </nav>
+        
+        <!-- Comments (bottom) -->
+        <section class="comments-section px-3">
+          <!-- pluralize not working for 0 comments for some reason -->
+          
+          <header class="d-flex justify-content-between align-items-center mb-4">
+            <h4 class="text-light m-0">{{ object.num_comments }} Comment{{ object.num_comments|pluralize }}</h4>
+            <span>
+              <i class="far fa-minus-square"></i>
+            </span>
+          </header>
+          
+          {% if user.is_authenticated %}
+          <form method="POST" autocomplete="off" class="mb-4">
+            {% csrf_token %}
+            <div class="form-group">
+              {{ comment_form }}
+            </div>
         </form>
         {% else %}
         <a class="btn btn-outline-secondary d-block" href="{% url 'login' %}?next={{request.path}}">Log in to add a comment!</a><br>
@@ -80,16 +93,16 @@
         <strong class="text-secondary">No comments yet...</strong>
         {% endif %}
       </section>
-    </section>
+    </aside>
     
     <!-- File Content (center)-->
     <section class="col-9 file-contents-section">
       <h4 class="text-left file-name mb-4">Loading REAMDE file</h4>
       <pre><code class="file-contents-code"></code></pre>
     </section>
-    
   </div>
-
+</main>
+  
   <!-- Commits (right)-->
   <!-- <section class="commits-section d-none">
     <h1 class="mb-2">Repo Commits</h1>
@@ -105,7 +118,7 @@
     {% endfor %}
   </section> -->
 
-</main>
+</div>
 
 <!-- highlight.js (syntax highlighting + line numbering) -->
 <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/highlight.min.js"></script>
