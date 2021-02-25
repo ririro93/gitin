@@ -225,7 +225,7 @@ class RepoDetailView(View):
         try:
             updateRepo = request.GET.updateRepo     # add button to update repo
         except:
-            updateRepo = True
+            updateRepo = False
         print('###########')
         print('update: ', updateRepo)
         
@@ -261,11 +261,11 @@ class RepoDetailView(View):
             contents_json = serializers.serialize('json', contents_connected)
             context['contents'] = contents_json
             
-            # add comments to context
-            comments_connected = RepoComment.objects.filter(
-                repo_connected=self.githubRepo
-            ).order_by('-updated')
-            context['comments'] = comments_connected
+        # add comments to context
+        comments_connected = RepoComment.objects.filter(
+            repo_connected=self.githubRepo
+        ).order_by('-updated')
+        context['comments'] = comments_connected
         
         # check this portion
         if self.request.user.is_authenticated:

@@ -18,61 +18,80 @@
 <main class="container-fluid main-container d-flex flex-column">
   <div class="row h-100 main-row">
 
-    <!-- Explorer (left) -->
-    <nav class="explorer-nav col-3 ps-4">
-      <h4 class="mb-4">Explorer</h4>
-      <div class="explorer-div">
-        <span class="caret caret-down root-span"></span>
-        <ul class="nested active root-dir">
+    <!-- Explorer + Comments (left) -->
+    <section class="col-3">
+
+      <!-- Explorer (top) -->
+      <nav class="explorer-nav px-3" id="resizable">
+        <header class="d-flex justify-content-between align-items-center mb-4">
+          <h4 class="d-inline-block m-0">{{ object.path }}</h4>
+          <span>
+            <i class="far fa-minus-square"></i>
+          </span>
+        </header>
+        <div class="explorer-div">
+          <span class="caret caret-down root-span"></span>
+          <ul class="nested active root-dir">
+          </ul>
+        </div>
+      </nav>
+
+      <hr>
+      
+      <!-- Comments (bottom) -->
+      <section class="comments-section px-3">
+        <!-- pluralize not working for 0 comments for some reason -->
+        
+        <header class="d-flex justify-content-between align-items-center mb-4">
+          <h4 class="text-light m-0">{{ object.num_comments }} Comment{{ object.num_comments|pluralize }}</h4>
+          <span>
+            <i class="far fa-minus-square"></i>
+          </span>
+        </header>
+
+        {% if user.is_authenticated %}
+        <form method="POST" autocomplete="off" class="mb-4">
+          {% csrf_token %}
+          <div class="form-group">
+            {{ comment_form }}
+          </div>
+        </form>
+        {% else %}
+        <a class="btn btn-outline-secondary d-block" href="{% url 'login' %}?next={{request.path}}">Log in to add a comment!</a><br>
+        {% endif %}
+        {% if comments %}
+        <ul class="comments-ul">
+          {% for comment in comments %}
+          <li class="mb-2">           
+            <div>
+              <span class="d-flex justify-content-between">
+                <strong class="text-muted">{{ comment.author }} </strong>
+                <small class="text-muted"> timestamp</small>
+                <!-- <small class="text-muted">{{ comment.updated }}</small> -->
+              </span>
+              <div class="comment-div px-2">
+                {{ comment.content }}
+              </div>
+            </div>
+          </li>
+          {% endfor %}
         </ul>
-      </div>
-    </nav>
+        {% else %}
+        <strong class="text-secondary">No comments yet...</strong>
+        {% endif %}
+      </section>
+    </section>
     
     <!-- File Content (center)-->
-    <section class="col-6 file-contents-section">
+    <section class="col-9 file-contents-section">
       <h4 class="text-left file-name mb-4">Loading REAMDE file</h4>
       <pre><code class="file-contents-code"></code></pre>
     </section>
     
-    <!-- Comments (right) -->
-    <section class="comments-section col-3 pe-5">
-      <!-- pluralize not working for 0 comments for some reason -->
-      <strong class="text-light">{{ object.num_comments }} Comment{{ object.num_comments|pluralize }}</strong>
-      {% if comments %}
-      <ul class="comments-ul">
-        {% for comment in comments %}
-        <li>           
-          <div>
-            <span class="d-flex justify-content-between">
-              <strong class="text-muted">{{ comment.author }} </strong>
-              <small class="text-muted"> timestamp to be added</small>
-              <!-- <small class="text-muted">{{ comment.updated }}</small> -->
-            </span>
-            <div class="comment-div px-2">
-              {{ comment.content }}
-            </div>
-          </div>
-        </li>
-        {% endfor %}
-      </ul>
-      {% else %}
-      <strong class="text-secondary">No comments yet...</strong>
-      {% endif %}
-      {% if user.is_authenticated %}
-      <form method="POST">
-        {% csrf_token %}
-        <div class="form-group">
-          {{ comment_form }}
-        </div>
-      </form>
-      {% else %}
-      <a class="btn btn-outline-secondary" href="{% url 'login' %}?next={{request.path}}">Log in to add a comment!</a><br>
-      {% endif %}
-    </section>
   </div>
 
   <!-- Commits (right)-->
-  <section class="commits-section d-none">
+  <!-- <section class="commits-section d-none">
     <h1 class="mb-2">Repo Commits</h1>
     {% for commit in commits %}
     <div>
@@ -84,7 +103,7 @@
       </div>
     </div>
     {% endfor %}
-  </section>
+  </section> -->
 
 </main>
 
@@ -94,6 +113,7 @@
 
 <!-- My scripts -->
 <script>
+
 // get data from backend
 const contentFiles = {{ contents|safe }};
 const repoPath = "{{ repo_path|safe }}";
@@ -103,8 +123,10 @@ const rootSpan = document.querySelector(".root-span");
 const rootDir = document.querySelector(".root-dir");
 const fileContentsCode = document.querySelector(".file-contents-code");
 const fileNameDiv = document.querySelector(".file-name");
-rootSpan.innerHTML = "{{ object.name|safe }}";
+const explorerNav = document.querySelector(".explorer-nav")
 
+// init
+rootSpan.innerHTML = "{{ object.name|safe }}";
 
 // make new dom elements with file contents data
 contentFiles.forEach(contentfile => {
