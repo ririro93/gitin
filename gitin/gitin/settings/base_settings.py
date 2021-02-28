@@ -107,6 +107,14 @@ MEDIA_ROOT = BASE_DIR / 'media'
 
 
 ## Django-allauth settings
+SITE_ID = 3
+ACCOUNT_EMAIL_VERIFICATION = 'none'
+SOCIALACCOUNT_AUTO_SIGNUP = False
+SOCIALACCOUNT_EMAIL_REQUIRED = True
+# SOCIALACCOUNT_FORMS = {
+#     'signup':'users.forms.SocialSignupForm'
+# }
+
 AUTHENTICATION_BACKENDS = [
     # Needed to login by username in Django admin, regardless of `allauth`
     'django.contrib.auth.backends.ModelBackend',
@@ -115,7 +123,6 @@ AUTHENTICATION_BACKENDS = [
     'allauth.account.auth_backends.AuthenticationBackend',
 ]
 
-SITE_ID = 3
 
 SOCIALACCOUNT_PROVIDERS = {
     'google': {
@@ -136,6 +143,6 @@ SOCIALACCOUNT_PROVIDERS = {
     },
 }
 
-# # default setting is going to 'profile'
-# LOGIN_REDIRECT_URL = 'home'
-# LOGOUT_REDIRECT_URL = 'home'
+# default setting is going to 'profile'
+LOGIN_REDIRECT_URL = 'home'
+LOGOUT_REDIRECT_URL = 'home'

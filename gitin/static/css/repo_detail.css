@@ -28,8 +28,9 @@
 }
 
 .main-div {
-  width: 98vw;
+  width: 97vw;
   height: 100%;
+  margin: 0;
 }
 
 .main-row {
@@ -77,6 +78,8 @@
 
 .explorer-div {
   font-size: 0.9rem;
+  margin-bottom: 1rem;
+  cursor: pointer;
 }
 
 .collapse-folder-icon {
@@ -92,6 +95,9 @@
 ul, li {
   list-style-type: none;
   cursor: pointer;
+  white-space: nowrap;
+  overflow-x: hidden;
+  text-overflow: ellipsis; 
 }
 
 /* Remove margins and padding from the parent ul */
@@ -132,6 +138,7 @@ ul, li {
   color: #198754
 }
 
+
 /* ###################### Comments ###################### */
 .comments-section {
   font-weight: 300;
@@ -155,6 +162,12 @@ ul, li {
   font-size: 0.9rem;
 }
 
+.comment-login-btn {
+  white-space: nowrap;
+  overflow-x: hidden;
+  text-overflow: ellipsis;
+}
+
 .comments-ul {
   padding: 0;
 }
@@ -171,7 +184,6 @@ ul, li {
   overflow-y: scroll;
   /* overflow-x: scroll; */
   white-space: nowrap;
-  resize:horizontal;
 }
 
 .file-name {

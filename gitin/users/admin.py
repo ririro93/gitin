@@ -17,6 +17,7 @@ class SiteAdmin(admin.ModelAdmin):
 @admin.register(CustomUser)
 class CustomUserAdmin(admin.ModelAdmin):
     list_display = (
+        'pk',
         'email',
         'username',
         'date_joined',

@@ -35,7 +35,7 @@
     
     <div class="row h-100 w-100 main-row">
       <!-- Explorer + Comments (left) -->
-      <aside class="col-3 side-tab">
+      <aside class="col-2 side-tab">
         <!-- Explorer (top) -->
         <nav class="explorer-nav px-3" id="resizable">
           <header class="d-flex justify-content-between align-items-center mb-4 explorer-header">
@@ -63,14 +63,14 @@
           </header>
           <div class="comments-div">
             {% if user.is_authenticated %}
-            <form method="POST" autocomplete="off" class="mb-4">
+            <form method="POST" autocomplete="off" class="mb-4 commend-form">
               {% csrf_token %}
               <div class="form-group">
                 {{ comment_form }}
               </div>
             </form>
             {% else %}
-            <a class="btn btn-outline-secondary d-block" href="{% url 'login' %}?next={{request.path}}">Log in to add a comment!</a><br>
+            <a class="btn btn-outline-secondary d-block comment-login-btn" href="{% url 'login' %}?next={{ request.path }}">Log in to add a comment!</a><br>
             {% endif %}
             {% if comments %}
             <ul class="comments-ul">
@@ -97,7 +97,7 @@
       </aside>
         
         <!-- File Content (center)-->
-    <section class="col-9 file-contents-section">
+    <section class="col-10 file-contents-section">
       <h4 class="text-left file-name mb-4">Loading REAMDE file</h4>
       <pre><code class="file-contents-code"></code></pre>
     </section>
@@ -302,7 +302,7 @@ function hightlightCode() {
 collapseBtn.addEventListener("click", () => {
   sideTab.classList.toggle("d-none");
   collapseIcon.classList.toggle("spin180Deg");
-  fileContentsSection.classList.toggle("col-9");
+  fileContentsSection.classList.toggle("col-10");
   fileContentsSection.classList.toggle("col-12");
 })
 

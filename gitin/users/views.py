@@ -2,12 +2,12 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth import get_user_model
 from django.shortcuts import render, redirect
 
-from .forms import SignupForm, LoginForm
+from .forms import CustomSignupForm, LoginForm
 
 User = get_user_model()
 
 def signup_view(request):
-    form = SignupForm(request.POST or None)
+    form = CustomSignupForm(request.POST or None)
     if form.is_valid():
         print(form.cleaned_data)
         username = form.cleaned_data.get('username')
