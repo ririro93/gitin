@@ -79,6 +79,15 @@
   font-size: 0.9rem;
 }
 
+.collapse-folder-icon {
+  transition: 0.2s;
+  cursor: pointer;
+}
+
+.collapse-folder-icon:hover {
+  color: #198754;
+}
+
 /* Remove default bullets */
 ul, li {
   list-style-type: none;
