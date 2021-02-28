@@ -38,10 +38,10 @@
       <aside class="col-3 side-tab">
         <!-- Explorer (top) -->
         <nav class="explorer-nav px-3" id="resizable">
-          <header class="d-flex justify-content-between align-items-center mb-4">
-            <h4 class="d-inline-block m-0">Explorer</h4>
+          <header class="d-flex justify-content-between align-items-center mb-4 explorer-header">
+            <h4 class="d-inline-block m-0 explorer-h4">Explorer</h4>
             <span>
-              <i class="far fa-minus-square"></i>
+              <i class="far fa-minus-square collapse-folder-icon"></i>
             </span>
           </header>
           <div class="explorer-div">
@@ -52,50 +52,51 @@
         </nav>
         
         <!-- Comments (bottom) -->
-        <section class="comments-section px-3">
+        <section class="comments-section px-3 pt-3">
           <!-- pluralize not working for 0 comments for some reason -->
           
-          <header class="d-flex justify-content-between align-items-center mb-4">
-            <h4 class="text-light m-0">{{ object.num_comments }} Comment{{ object.num_comments|pluralize }}</h4>
+          <header class="d-flex justify-content-between align-items-center mb-4 comments-header">
+            <h4 class="m-0 comments-h4">{{ object.num_comments }} Comment{{ object.num_comments|pluralize }}</h4>
             <span>
               <i class="far fa-minus-square"></i>
             </span>
           </header>
-          
-          {% if user.is_authenticated %}
-          <form method="POST" autocomplete="off" class="mb-4">
-            {% csrf_token %}
-            <div class="form-group">
-              {{ comment_form }}
-            </div>
-        </form>
-        {% else %}
-        <a class="btn btn-outline-secondary d-block" href="{% url 'login' %}?next={{request.path}}">Log in to add a comment!</a><br>
-        {% endif %}
-        {% if comments %}
-        <ul class="comments-ul">
-          {% for comment in comments %}
-          <li class="mb-2">           
-            <div>
-              <span class="d-flex justify-content-between">
-                <strong class="text-muted">{{ comment.author }} </strong>
-                <small class="text-muted"> timestamp</small>
-                <!-- <small class="text-muted">{{ comment.updated }}</small> -->
-              </span>
-              <div class="comment-div px-2">
-                {{ comment.content }}
+          <div class="comments-div">
+            {% if user.is_authenticated %}
+            <form method="POST" autocomplete="off" class="mb-4">
+              {% csrf_token %}
+              <div class="form-group">
+                {{ comment_form }}
               </div>
-            </div>
-          </li>
-          {% endfor %}
-        </ul>
-        {% else %}
-        <strong class="text-secondary">No comments yet...</strong>
-        {% endif %}
-      </section>
-    </aside>
-    
-    <!-- File Content (center)-->
+            </form>
+            {% else %}
+            <a class="btn btn-outline-secondary d-block" href="{% url 'login' %}?next={{request.path}}">Log in to add a comment!</a><br>
+            {% endif %}
+            {% if comments %}
+            <ul class="comments-ul">
+              {% for comment in comments %}
+              <li class="mb-2">           
+                <div>
+                  <span class="d-flex justify-content-between">
+                    <strong class="text-muted">{{ comment.author }} </strong>
+                    <small class="text-muted"> timestamp</small>
+                    <!-- <small class="text-muted">{{ comment.updated }}</small> -->
+                  </span>
+                  <div class="comment-div px-2">
+                    {{ comment.content }}
+                  </div>
+                </div>
+              </li>
+              {% endfor %}
+            </ul>
+            {% else %}
+            <strong class="text-secondary">No comments yet...</strong>
+            {% endif %}
+          </div>
+        </section>
+      </aside>
+        
+        <!-- File Content (center)-->
     <section class="col-9 file-contents-section">
       <h4 class="text-left file-name mb-4">Loading REAMDE file</h4>
       <pre><code class="file-contents-code"></code></pre>
@@ -132,15 +133,27 @@ const contentFiles = {{ contents|safe }};
 const repoPath = "{{ repo_path|safe }}";
 
 // select elements
+const collapseBtn = document.querySelector(".collapse-btn");
+const collapseIcon = document.querySelector(".collapse-icon");
+
+const sideTab = document.querySelector(".side-tab");
+
 const rootSpan = document.querySelector(".root-span");
 const rootDir = document.querySelector(".root-dir");
 const fileContentsSection = document.querySelector(".file-contents-section");
 const fileContentsCode = document.querySelector(".file-contents-code");
 const fileNameDiv = document.querySelector(".file-name");
+
 const explorerNav = document.querySelector(".explorer-nav");
-const collapseBtn = document.querySelector(".collapse-btn");
-const collapseIcon = document.querySelector(".collapse-icon");
-const sideTab = document.querySelector(".side-tab");
+const explorerHeader = document.querySelector(".explorer-header");
+const explorerH4 = document.querySelector(".explorer-h4");
+const explorerDiv = document.querySelector(".explorer-div");
+const collapseFolderIcon = document.querySelector(".collapse-folder-icon");
+
+const commentsHeader = document.querySelector(".comments-header");
+const commentsDiv = document.querySelector(".comments-div");
+const commentsH4 = document.querySelector(".comments-h4");
+
 
 // init
 rootSpan.innerHTML = "{{ object.name|safe }}";
@@ -291,9 +304,35 @@ collapseBtn.addEventListener("click", () => {
   collapseIcon.classList.toggle("spin180Deg");
   fileContentsSection.classList.toggle("col-9");
   fileContentsSection.classList.toggle("col-12");
-  
 })
 
+// folder collpase logic
+collapseFolderIcon.addEventListener("click", () => {
+  const openedDirs = [...rootDir.querySelectorAll(".caret-down")];
+  const activeUls = [...rootDir.querySelectorAll(".active")];
+
+  openedDirs.forEach(openedDir => {
+    console.log(openedDir);
+    openedDir.classList.remove("caret-down");
+  });
+  activeUls.forEach(activeUl => {
+    console.log(activeUl);
+    activeUl.classList.remove("active");
+  })
+
+})
+
+// explorer collapse logic
+explorerH4.addEventListener("click", () => {
+  explorerHeader.classList.toggle("text-secondary");
+  explorerDiv.classList.toggle("d-none");
+})
+
+// comments collapse logic
+commentsH4.addEventListener("click", () => {
+  commentsHeader.classList.toggle("text-secondary");
+  commentsDiv.classList.toggle("d-none");
+})
 </script>
 
 {% endblock %}
