@@ -11,7 +11,7 @@
 <div class="main-container d-flex">
   <!-- collapse button -->
   <button class="btn collapse-btn p-0 shadow-none">
-    <i class="fas fa-angle-double-left"></i>
+    <i class="fas fa-angle-double-left collapse-icon"></i>
   </button>
 
   <!-- main -->
@@ -134,9 +134,13 @@ const repoPath = "{{ repo_path|safe }}";
 // select elements
 const rootSpan = document.querySelector(".root-span");
 const rootDir = document.querySelector(".root-dir");
+const fileContentsSection = document.querySelector(".file-contents-section");
 const fileContentsCode = document.querySelector(".file-contents-code");
 const fileNameDiv = document.querySelector(".file-name");
-const explorerNav = document.querySelector(".explorer-nav")
+const explorerNav = document.querySelector(".explorer-nav");
+const collapseBtn = document.querySelector(".collapse-btn");
+const collapseIcon = document.querySelector(".collapse-icon");
+const sideTab = document.querySelector(".side-tab");
 
 // init
 rootSpan.innerHTML = "{{ object.name|safe }}";
@@ -280,6 +284,15 @@ function hightlightCode() {
     hljs.lineNumbersBlock(block);
   });
 }
+
+// collapse btn logic
+collapseBtn.addEventListener("click", () => {
+  sideTab.classList.toggle("d-none");
+  collapseIcon.classList.toggle("spin180Deg");
+  fileContentsSection.classList.toggle("col-9");
+  fileContentsSection.classList.toggle("col-12");
+  
+})
 
 </script>
 

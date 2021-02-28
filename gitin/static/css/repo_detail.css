@@ -1,3 +1,4 @@
+/* ###################### collapse ###################### */
 .collapse-btn {
   color: white;
   height: 100%;
@@ -6,6 +7,19 @@
   border-radius: 0;
 }
 
+.collapse-btn:hover {
+  color: rgb(25 135 82);
+} 
+
+.collapse-icon {
+  transition: 0.5s;
+}
+
+.spin180Deg {
+  transform: rotateZ(180deg);
+}
+
+/* ###################### main ###################### */
 .main-container {
   height: 94vh;
   max-height: 94vh;
