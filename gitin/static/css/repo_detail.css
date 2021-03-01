@@ -92,7 +92,8 @@
 }
 
 /* Remove default bullets */
-ul, li {
+.explorer-div ul, 
+.explorer-div li {
   list-style-type: none;
   cursor: pointer;
   white-space: nowrap;

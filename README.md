@@ -179,8 +179,18 @@ Learned
 
 <br>
 
+### (03-01)
+`[ririro]`
+
+Learned
+- [django] Customizing Allauth(5)
+
+<br>
+
+
 ## References
 (1) [medium post](https://whizzoe.medium.com/in-5-mins-set-up-google-login-to-sign-up-users-on-django-e71d5c38f5d5) : google login <br>
 (2) [iconfinder](https://www.iconfinder.com/social-media-icons) : sns icons <br>
 (3) [ImageField](https://studygyaan.com/django/how-to-upload-and-display-image-in-django) : profile image
 (4) [dev.to](https://dev.to/radualexandrub/how-to-create-a-comment-section-for-your-django-blog-3egp)
+(5) [medium](https://gavinwiener.medium.com/modifying-django-allauth-forms-6eb19e77ef56)

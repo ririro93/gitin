@@ -24,12 +24,9 @@
   </div>
 </section>
 
-
 <!-- GitIn login -->
 <section class="container">
   <div class="row">
-    <!-- allauth -->
-    <p class="col-4 offset-4">You are about to use your {{ account.get_provider.name }} account to login to Gitin. As a final step, please complete the following form</p>
     <form class="col-4 offset-4 d-flex flex-column p-0" method='POST' action="{% url 'socialaccount_signup' %}">
       <hr>
       {% csrf_token %}

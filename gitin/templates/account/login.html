@@ -2,6 +2,10 @@
 {% load static %}
 {% load socialaccount %}
 
+{% block base_head %}
+<link rel="stylesheet" href="{% static 'css/accounts.css' %}">
+{% endblock %}
+
 {% block content %}
 <!-- socials login -->
 <section>
@@ -28,21 +32,23 @@
 <!-- GitIn login -->
 <section class="container">
   <div class="row">
-    <!-- allauth -->
-    <p class="col-4 offset-4">You are about to use your {{ account.get_provider.name }} account to login to Gitin. As a final step, please complete the following form</p>
-    <form class="col-4 offset-4 d-flex flex-column p-0" method='POST' action="{% url 'socialaccount_signup' %}">
-      <hr>
+    <form class="col-4 offset-4 d-flex flex-column p-0" method='POST' action="" enctype="multipart/form-data">
       {% csrf_token %}
+      <hr>
       
       {{ form.as_p }}
-      
-      <button type='submit' class='btn bg-primary text-white'>Sign up</button>
+      <!-- to redirect to previous page -->
+      {% if request.GET.next %}
+      <button type='submit' class="btn bg-primary text-white" name="next" value="{{ request.GET.next }}">Login</button>
+      {% else %}
+      <button type='submit' class="btn bg-primary text-white">Login</button>
+      {% endif %}
     </form>
   </div>
   <div class="row mt-3">
     <div class="col-4 offset-4 text-center"> 
-      <div class="d-inline">Do you have an account? </div>
-      <a href="{% url 'account_login' %}" class="text-primary text-decoration-none d-inline">Login</a>
+      <a href="{% url 'account_reset_password' %}" class="text-secondary text-decoration-none d-inline mx-3">Reset Password</a>
+      <a href="{% url 'account_signup' %}" class="text-secondary text-decoration-none d-inline mx-3">Sign up</a>
     </div>
   </div>
 </section>
