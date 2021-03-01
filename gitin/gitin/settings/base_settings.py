@@ -23,9 +23,9 @@ INSTALLED_APPS = [
     'allauth.socialaccount.providers.twitter',
     
     # my apps
-    'users',
     'profiles',
     'gitAPI',
+    'accounts',
 ]
 
 MIDDLEWARE = [
@@ -57,10 +57,6 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'gitin.wsgi.application'
-
-
-## User Model
-AUTH_USER_MODEL = 'users.CustomUser'
 
 
 ## Password validation
@@ -108,9 +104,13 @@ MEDIA_ROOT = BASE_DIR / 'media'
 
 ## Django-allauth settings
 SITE_ID = 3
-ACCOUNT_EMAIL_VERIFICATION = 'none'
+ACCOUNT_AUTHENTICATION_METHOD = 'email'
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_EMAIL_VERIFICATION = 'optional'
+
+ACCOUNT_USERNAME_REQUIRED = False
+
 SOCIALACCOUNT_AUTO_SIGNUP = False
-SOCIALACCOUNT_EMAIL_REQUIRED = True
 # SOCIALACCOUNT_FORMS = {
 #     'signup':'users.forms.SocialSignupForm'
 # }
