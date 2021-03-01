@@ -19,7 +19,7 @@ body {
 }
 
 /* searchbar */
-input[type="checkbox"]{
+.my-navbar input[type="checkbox"]{
   display: none;
 }
 

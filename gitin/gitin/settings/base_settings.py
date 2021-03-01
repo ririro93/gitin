@@ -78,15 +78,9 @@ AUTH_PASSWORD_VALIDATORS = [
 
 ## Internationalization
 LANGUAGE_CODE = 'en-us'
-
 TIME_ZONE = 'Asia/Seoul'
-
 USE_I18N = True
-
 USE_L10N = True
-
-
-# should be changed False for local time
 USE_TZ = False
 
 
@@ -103,27 +97,21 @@ MEDIA_ROOT = BASE_DIR / 'media'
 
 
 ## Django-allauth settings
-SITE_ID = 3
+# accounts
 ACCOUNT_AUTHENTICATION_METHOD = 'email'
 ACCOUNT_EMAIL_REQUIRED = True
-ACCOUNT_EMAIL_VERIFICATION = 'optional'
-
+ACCOUNT_EMAIL_VERIFICATION = 'none'
 ACCOUNT_USERNAME_REQUIRED = False
+ACCOUNT_FORMS = {
+    'login': 'accounts.forms.MyCustomLoginForm',
+    'signup': 'accounts.forms.MyCustomSignupForm',
+}
 
+# social accounts
 SOCIALACCOUNT_AUTO_SIGNUP = False
-# SOCIALACCOUNT_FORMS = {
-#     'signup':'users.forms.SocialSignupForm'
-# }
-
-AUTHENTICATION_BACKENDS = [
-    # Needed to login by username in Django admin, regardless of `allauth`
-    'django.contrib.auth.backends.ModelBackend',
-
-    # `allauth` specific authentication methods, such as login by e-mail
-    'allauth.account.auth_backends.AuthenticationBackend',
-]
-
-
+SOCIALACCOUNT_FORMS = {
+    'signup':'accounts.forms.MyCustomSocialSignupForm',
+}
 SOCIALACCOUNT_PROVIDERS = {
     'google': {
         'SCOPE': [
@@ -142,6 +130,16 @@ SOCIALACCOUNT_PROVIDERS = {
         ],
     },
 }
+
+# others
+SITE_ID = 4
+AUTHENTICATION_BACKENDS = [
+    # Needed to login by username in Django admin, regardless of `allauth`
+    'django.contrib.auth.backends.ModelBackend',
+
+    # `allauth` specific authentication methods, such as login by e-mail
+    'allauth.account.auth_backends.AuthenticationBackend',
+]
 
 # default setting is going to 'profile'
 LOGIN_REDIRECT_URL = 'home'

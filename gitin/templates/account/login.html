@@ -2,6 +2,10 @@
 {% load static %}
 {% load socialaccount %}
 
+{% block base_head %}
+<link rel="stylesheet" href="{% static 'css/accounts.css' %}">
+{% endblock %}
+
 {% block content %}
 <!-- socials login -->
 <section>
