@@ -26,6 +26,7 @@
         - [ ] form validation -> use bootstrap? or django.contrib.auth.authenticate?
         - [ ] consider github as the only main socials login
         - [ ] reset password page
+    - [ ] logout page
     - [ ] profile page
         - [ ] Items
             - [ ] gihub.io link
@@ -63,7 +64,7 @@
         - [x] github
         - [ ] facebook
         - [x] twitter
-    - [ ] if user tries to sign in using a username that already exists on Github -> ask if same person
+    - [x] if user tries to sign in using a username that already exists on Github -> ask if same person
         - yes -> would you like to sign in using your github account?
         - no -> please choose a different username. 
     - [x] logout redirect to previous page
