@@ -56,6 +56,10 @@
   padding-right: 1.1rem;
 }
 
+.full-max-height {
+  max-height: 100% !important;
+}
+
 /* ###################### explorer ###################### */
 .explorer-nav {
   font-weight: 300;

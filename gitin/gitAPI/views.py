@@ -225,7 +225,7 @@ class RepoDetailView(View):
         try:
             updateRepo = request.GET.updateRepo     # add button to update repo
         except:
-            updateRepo = True
+            updateRepo = False
         print('###########')
         print('update: ', updateRepo)
         

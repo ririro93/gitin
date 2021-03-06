@@ -149,6 +149,7 @@ const explorerH4 = document.querySelector(".explorer-h4");
 const explorerDiv = document.querySelector(".explorer-div");
 const collapseFolderIcon = document.querySelector(".collapse-folder-icon");
 
+const commentsSection = document.querySelector(".comments-section");
 const commentsHeader = document.querySelector(".comments-header");
 const commentsDiv = document.querySelector(".comments-div");
 const commentsH4 = document.querySelector(".comments-h4");
@@ -325,12 +326,14 @@ collapseFolderIcon.addEventListener("click", () => {
 explorerH4.addEventListener("click", () => {
   explorerHeader.classList.toggle("text-secondary");
   explorerDiv.classList.toggle("d-none");
+  commentsSection.classList.toggle("full-max-heihgt");
 })
 
 // comments collapse logic
 commentsH4.addEventListener("click", () => {
   commentsHeader.classList.toggle("text-secondary");
   commentsDiv.classList.toggle("d-none");
+  explorerNav.classList.toggle("full-max-height");
 })
 </script>
 
