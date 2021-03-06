@@ -5,7 +5,9 @@
 # sha : 284ebfd01afd9bf7be50f68745578d253ce641fe
 
 # after content change
-# sha : 54981429af5cea1f9942cf22c4c087bbe9b59f27
+# sha : 23290b8d4d058c801456e91db77d0dc8670073af
 
-# after renaming parent dir
-# sha : 
+# after renaming parent dir -> sha no change
+# sha : 23290b8d4d058c801456e91db77d0dc8670073af
+
+# what happens when new lines are added?

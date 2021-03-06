@@ -45,10 +45,11 @@ class RepoCommentAdmin(admin.ModelAdmin):
 
 @admin.register(RepoCommit)
 class RepoCommitAdmin(admin.ModelAdmin):
-    # date_hierarchy = 'updated'
+    date_hierarchy = 'committed_at'
     list_display = (
         'repo_connected',
         'author',
+        'committed_at',
         'url',
     )
 

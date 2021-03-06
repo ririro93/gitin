@@ -225,7 +225,7 @@ class RepoDetailView(View):
         try:
             updateRepo = request.GET.updateRepo     # add button to update repo
         except:
-            updateRepo = False
+            updateRepo = True
         print('###########')
         print('update: ', updateRepo)
         
@@ -239,8 +239,8 @@ class RepoDetailView(View):
         
         # if update update commits and contents
         if updateRepo:
-            # # create commits and add to context
-            # context['commits'] = self.create_repo_commits()
+            # create commits and add to context
+            context['commits'] = self.create_repo_commits()
             
             # update contents
             self.delete_repo_content_files()
