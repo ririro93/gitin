@@ -1,7 +1,13 @@
 from django.contrib import admin
 
-from .models import GithubUser, GithubRepo, RepoComment, RepoCommit, RepoContentFile
- 
+from .models import (
+    GithubUser, 
+    GithubRepo, 
+    RepoComment, 
+    RepoCommit,
+    RepoContentFile,
+    FileComment,
+)
     
 @admin.register(GithubUser)
 class GithubUserAdmin(admin.ModelAdmin):
@@ -60,4 +66,17 @@ class RepoContentFileAdmin(admin.ModelAdmin):
         'name',
         'path',
         'url',
+    )
+    
+@admin.register(FileComment)
+class FileCommentAdmin(admin.ModelAdmin):
+    date_hierarchy = 'updated'
+    list_display = (
+        'repo_connected',
+        'file_connected',
+        'line_number',
+        'author',
+        'content',
+        'created',
+        'updated',
     )

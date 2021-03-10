@@ -43,12 +43,12 @@ class GithubRepo(models.Model):
 class RepoComment(models.Model):
     repo_connected = models.ForeignKey(
         GithubRepo,
-        related_name='comments',
+        related_name='repo_comments',
         on_delete=models.CASCADE,
     )
     author = models.ForeignKey(
         User,
-        related_name='author',
+        related_name='repo_comments',
         on_delete=models.CASCADE,
     )
     content = models.CharField(max_length=400)
@@ -86,3 +86,26 @@ class RepoContentFile(models.Model):
     
     def __str__(self):
         return self.path
+    
+class FileComment(models.Model):
+    repo_connected = models.ForeignKey(
+        GithubRepo,
+        related_name='file_comments',
+        on_delete=models.CASCADE,
+    )
+    file_connected = models.ForeignKey(
+        RepoContentFile,
+        on_delete=models.CASCADE,
+    )
+    author = models.ForeignKey(
+        User,
+        related_name='file_comments',
+        on_delete=models.CASCADE,
+    )
+    line_number = models.IntegerField(blank=True, null=True)
+    content = models.CharField(max_length=400)
+    created = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f'{self.author} {self.repo_connected} {self.content}'

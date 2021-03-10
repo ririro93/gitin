@@ -51,15 +51,10 @@
           </div>
         </nav>
         
-        <!-- Comments (bottom) -->
-        <section class="comments-section px-3 pt-3">
-          <!-- pluralize not working for 0 comments for some reason -->
-          
+        <!-- Repo Comments (middle) -->
+        <section class="comments-section px-3 pt-3">          
           <header class="d-flex justify-content-between align-items-center mb-4 comments-header">
-            <h4 class="m-0 comments-h4">{{ object.num_comments }} Comment{{ object.num_comments|pluralize }}</h4>
-            <span>
-              <i class="far fa-minus-square"></i>
-            </span>
+            <h4 class="m-0 comments-h4">Repo Comments</h4>
           </header>
           <div class="comments-div">
             {% if user.is_authenticated %}
@@ -89,8 +84,31 @@
               {% endfor %}
             </ul>
             {% else %}
-            <strong class="text-secondary">No comments yet...</strong>
+            <div class="mb-2">
+              <strong class="text-secondary mb-2">No comments yet...</strong>
+            </div>
             {% endif %}
+          </div>
+        </section>
+
+        <!-- File Comments (bottom) -->
+        <section class="comments-section px-3 pt-3">          
+          <header class="d-flex justify-content-between align-items-center mb-4 comments-header">
+            <h4 class="m-0 comments-h4">File Comments</h4>
+          </header>
+          <div class="comments-div">
+            {% if user.is_authenticated %}
+            <form method="POST" autocomplete="off" class="mb-4 file-comment-form">
+              {% csrf_token %}
+              <div class="form-group">
+                <input type="text" id="file-comment-input"name="file_comment" placeholder="Write a comment...">
+              </div>
+            </form>
+            {% else %}
+            <a class="btn btn-outline-secondary d-block comment-login-btn" href="{% url 'login' %}?next={{ request.path }}">Log in to add a comment!</a><br>
+            {% endif %}
+            <ul class="file-comments-ul">
+            </ul>
           </div>
         </section>
       </aside>
@@ -154,6 +172,9 @@ const commentsHeader = document.querySelector(".comments-header");
 const commentsDiv = document.querySelector(".comments-div");
 const commentsH4 = document.querySelector(".comments-h4");
 
+const fileCommentForm = document.querySelector(".file-comment-form");
+const fileCommentInput = document.querySelector("#file-comment-input");
+const fileCommentUl = document.querySelector(".file-comments-ul");
 
 // init
 rootSpan.innerHTML = "{{ object.name|safe }}";
@@ -335,6 +356,53 @@ commentsH4.addEventListener("click", () => {
   commentsDiv.classList.toggle("d-none");
   explorerNav.classList.toggle("full-max-height");
 })
+
+// File comment logic
+fileCommentForm.addEventListener("submit", (e) => {
+  e.preventDefault();
+  AddFileCommentPOST();
+  fileCommentInput.value = "";
+})
+
+// Ajax Request : File Comment
+function AddFileCommentPOST() {
+  $.ajax({
+    url: 'add-file-comment/',
+    type: 'post',
+    data: {'repo': "{{ object.path|safe }}", 'file_name': fileNameDiv.innerHTML, 'comment': fileCommentInput.value},
+    headers: { "X-CSRFToken": "{{ csrf_token }}"},
+  }).done(res => {
+    console.log('response successfully received: ');
+    DeleteFileComments();
+    AddFileComments(res['data']);
+  }).fail((failed) => {
+    console.log('ajax request failed');
+    console.log(failed);
+  })
+}
+
+// Delete Previous Comments
+function DeleteFileComments(data) {
+  const fileComments = [...fileCommentUl.querySelectorAll("li")];
+  fileComments.forEach(fileComment => {
+    fileComment.remove();
+  })
+}
+
+// Add new File Comments to html
+function AddFileComments(data) {
+  const data_json = JSON.parse(data);
+  console.log(data_json);
+  data_json.forEach(d => {
+    console.log(d['fields']);
+
+    file_comment_li = document.createElement("li");
+    file_comment_li.innerHTML = d['fields']['content'];
+
+    fileCommentUl.appendChild(file_comment_li);
+  })
+}
+
 </script>
 
 {% endblock %}

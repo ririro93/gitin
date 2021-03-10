@@ -14,7 +14,7 @@ from django.views.generic import DetailView, ListView, CreateView
 from django.views.generic.edit import FormMixin
 from django.utils import timezone
 
-from .models import GithubUser, GithubRepo, RepoComment, RepoCommit, RepoContentFile
+from .models import GithubUser, GithubRepo, RepoComment, RepoCommit, RepoContentFile, FileComment
 from .forms import CommentForm
 
 G_TOKEN = django_settings.GITHUB_TOKEN
@@ -151,7 +151,6 @@ class SearchGithub(View):
             return serializers.serialize('json', qs)
         return None
     
-
 class UserDetailView(View):    
     def get(self, request, *args, **kwargs):
         # get requested user data
@@ -225,7 +224,7 @@ class RepoDetailView(View):
         try:
             updateRepo = request.GET.updateRepo     # add button to update repo
         except:
-            updateRepo = True
+            updateRepo = False
         print('###########')
         print('update: ', updateRepo)
         
@@ -343,8 +342,7 @@ class RepoDetailView(View):
             print(curr_content.path, ' created')
             qs |= RepoContentFile.objects.filter(pk=repoContentFile.pk)
         return qs
-                
-                
+                           
 class FileDetailView(View):
     def post(self, request, *args, **kwargs):
         # format requested data
@@ -358,6 +356,48 @@ class FileDetailView(View):
         decoded_file_contents = base64.b64decode(file_contents).decode('utf-8')
         context = {
             'data': decoded_file_contents,
+        }
+        
+        return HttpResponse(json.dumps(context), content_type='application/json')
+
+class AddFileCommentView(View):
+    def post(self, request, *args, **kwargs):
+        # get comment data
+        data = request.POST.dict()
+        print('## AddFileCommentView')
+        print(data)
+        
+        # get repo and file
+        githubRepo = GithubRepo.objects.get(
+            path=data.get('repo'),
+        )
+        repoContentFile = RepoContentFile.objects.get(
+            repo_connected=githubRepo,
+            name=data.get('file_name'),
+        )
+        
+        # create new file comment
+        new_file_comment = FileComment(
+            content=data.get('comment'),
+            author=self.request.user,
+            repo_connected=githubRepo,
+            file_connected=repoContentFile,
+        )
+        new_file_comment.save()
+        
+        # get all related file comments
+        file_comments = FileComment.objects.filter(
+            repo_connected=githubRepo,
+            file_connected=repoContentFile,
+        )
+        file_comments_json = serializers.serialize(
+            'json', 
+            file_comments, 
+            fields=('content', 'line_number', 'author', 'updated')   
+        )
+
+        context = {
+            'data': file_comments_json,
         }
         
         return HttpResponse(json.dumps(context), content_type='application/json')
