@@ -174,8 +174,10 @@
   text-overflow: ellipsis;
 }
 
-.comments-ul {
+.comments-ul, 
+.file-comments-ul {
   padding: 0;
+  list-style-type: none;
 }
 
 .comment-div {
@@ -223,5 +225,9 @@
 }
 
 .lineNum:hover {
+  background-color: rgba(255, 255, 0, 0.2);
+}
+
+.bgc-yellow {
   background-color: rgba(255, 255, 0, 0.5);
 }

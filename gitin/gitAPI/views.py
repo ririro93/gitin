@@ -378,10 +378,11 @@ class AddFileCommentView(View):
         
         # create new file comment
         new_file_comment = FileComment(
-            content=data.get('comment'),
-            author=self.request.user,
             repo_connected=githubRepo,
             file_connected=repoContentFile,
+            content=data.get('comment'),
+            line_number=data.get('line_number') or None,
+            author=self.request.user,
         )
         new_file_comment.save()
         
