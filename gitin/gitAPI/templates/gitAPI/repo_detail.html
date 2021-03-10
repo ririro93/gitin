@@ -278,8 +278,7 @@ togglers.forEach(toggler => {
   })
 });
 
-
-// Send Ajax File Request to Backend and display contents
+// Ajax Request : display contents
 function sendPostRequest(contentSha, ishtmlFile) {
   $.ajax({
     url: 'get-file/',
@@ -296,6 +295,9 @@ function sendPostRequest(contentSha, ishtmlFile) {
     }
     fileContentsCode.innerHTML = fileContents;
     hightlightCode();
+    setTimeout(() => {
+      addEventToCode();
+    }, 50);
   }).fail((failed) => {
     console.log('ajax request failed');
     console.log(failed);
@@ -317,6 +319,21 @@ function hightlightCode() {
     hljs.highlightBlock(block);
     hljs.lineNumbersBlock(block);
   });
+}
+
+// add click event to code
+function addEventToCode() {
+  const codeLines = [...document.querySelectorAll(".hljs-ln tr")];
+  
+  codeLines.forEach(codeLine => {
+    const lineNum = codeLine.firstChild;
+    
+    lineNum.classList.add('lineNum');
+    lineNum.addEventListener("click", () => {
+      const lineNumber = lineNum.getAttribute('data-line-number');
+      console.log('clicked line number:', lineNumber);      
+    })
+  })
 }
 
 // collapse btn logic
