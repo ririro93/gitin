@@ -354,8 +354,25 @@ class FileDetailView(View):
         repo = github.get_repo(repo_path)
         file_contents = repo.get_git_blob(sha).content
         decoded_file_contents = base64.b64decode(file_contents).decode('utf-8')
+        
+        # get file comments
+        my_repo = GithubRepo.objects.get(path=repo_path)
+        my_contentFile = RepoContentFile.objects.get(sha=sha)
+        
+        file_comments = FileComment.objects.filter(
+            repo_connected=my_repo,
+            file_connected=my_contentFile,
+        ).order_by('-updated')
+        
+        file_comments_json = serializers.serialize(
+            'json', 
+            file_comments, 
+            fields=('content', 'line_number', 'author', 'updated')   
+        )        
+        
         context = {
             'data': decoded_file_contents,
+            'file_comments': file_comments_json,
         }
         
         return HttpResponse(json.dumps(context), content_type='application/json')

@@ -64,7 +64,7 @@
               </div>
             </form>
             {% else %}
-            <a class="btn btn-outline-secondary d-block comment-login-btn" href="{% url 'login' %}?next={{ request.path }}">Log in to add a comment!</a><br>
+            <a class="btn btn-outline-secondary d-block comment-login-btn" href="{% url 'account_login' %}?next={{ request.path }}">Log in to add a comment!</a><br>
             {% endif %}
             {% if comments %}
             <ul class="comments-ul">
@@ -104,7 +104,7 @@
               </div>
             </form>
             {% else %}
-            <a class="btn btn-outline-secondary d-block comment-login-btn" href="{% url 'login' %}?next={{ request.path }}">Log in to add a comment!</a><br>
+            <a class="btn btn-outline-secondary d-block comment-login-btn" href="{% url 'account_login' %}?next={{ request.path }}">Log in to add a comment!</a><br>
             {% endif %}
             <ul class="file-comments-ul">
             </ul>
@@ -120,9 +120,9 @@
   </div>
 </main>
 
-
+{% comment %}
 <!-- Commits (right)-->
-<!-- <section class="commits-section d-none">
+<section class="commits-section d-none">
   <h1 class="mb-2">Repo Commits</h1>
   {% for commit in commits %}
   <div>
@@ -134,7 +134,8 @@
     </div>
   </div>
   {% endfor %}
-</section> -->
+</section>
+{% endcomment %}
 
 </div>
 {% endblock %}
@@ -276,7 +277,7 @@ togglers.forEach(toggler => {
   })
 });
 
-// Ajax Request : display contents
+// Ajax Request : display contents & comments
 function sendPostRequest(contentSha, ishtmlFile) {
   $.ajax({
     url: 'get-file/',
@@ -296,6 +297,10 @@ function sendPostRequest(contentSha, ishtmlFile) {
     setTimeout(() => {
       addEventToCode();
     }, 50);
+
+    // add file comments
+    DeleteFileComments();
+    AddFileComments(data['file_comments']);
   }).fail((failed) => {
     console.log('ajax request failed');
     console.log(failed);
@@ -411,8 +416,9 @@ function AddFileCommentPOST() {
     headers: { "X-CSRFToken": "{{ csrf_token }}"},
   }).done(res => {
     console.log('response successfully received: ');
+    console.log(res);
     DeleteFileComments();
-    AddFileComments(res['data']);
+    AddFileComments(res['file_comments']);
   }).fail((failed) => {
     console.log('ajax request failed');
     console.log(failed);
