@@ -185,6 +185,13 @@
   border-radius: 0.5rem;
 }
 
+
+/* ###################### file comments ###################### */
+.toggle-line-number{
+  cursor: pointer;
+}
+
+
 /* ###################### file contents ###################### */
 .file-contents-section {
   font-weight: 300;
@@ -230,4 +237,8 @@
 
 .bgc-yellow {
   background-color: rgba(255, 255, 0, 0.5);
+}
+
+.bgc-green {
+  background-color: rgba(94, 255, 0, 0.3);
 }

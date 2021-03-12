@@ -7,6 +7,36 @@
 
 {% block content %}
 <!-- content block -->
+<!-- Modal for file comments -->
+<div class="modal fade text-dark" id="commentModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="commentModalLabel">Add Comment to line #?</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        {% if user.is_authenticated %}
+        <form method="POST" autocomplete="off" class="mb-4 modal-comment-form">
+          {% csrf_token %}
+          <div class="form-group">
+            <input type="text" id="modal-comment-input" name="file_comment" placeholder="Write a comment...">
+            <input type="hidden" id="modal-comment-line-number">
+          </div>
+        </form>
+        {% else %}
+        <a class="btn btn-outline-secondary d-block comment-login-btn" href="{% url 'account_login' %}?next={{ request.path }}">Log in to add a comment!</a><br>
+        {% endif %}
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary">Add Comment</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Main Container -->
 <div class="main-container d-flex">
   <!-- collapse button -->
   <button class="btn collapse-btn p-0 shadow-none">
@@ -175,15 +205,23 @@ const fileCommentForm = document.querySelector(".file-comment-form");
 const fileCommentInput = document.querySelector("#file-comment-input");
 const fileCommentUl = document.querySelector(".file-comments-ul");
 
+const commentModal = document.querySelector("#commentModal");
+const commentModalLabel = document.querySelector("#commentModalLabel");
+const modalCommentForm = document.querySelector(".modal-comment-form");
+const modalCommentInput = document.querySelector("#modal-comment-input");
+const modalCommentLineNumber = document.querySelector("#modal-comment-line-number");
+
 // init
 rootSpan.innerHTML = "{{ object.name|safe }}";
+const myModal = new bootstrap.Modal(document.getElementById("commentModal"));
 
 // make new dom elements with file contents data
+let activeContentSha = "";
 contentFiles.forEach(contentfile => {
   const contentType = contentfile.fields.content_type;
   const contentName = contentfile.fields.name;
-  const contentSha = contentfile.fields.sha;
   const contentPath = contentfile.fields.path.replaceAll("/", "-");
+  const contentSha = contentfile.fields.sha;
   let ishtmlFile = false;
   
   const contentParentId = contentPath.slice(0, contentPath.length - contentName.length).replaceAll(".", "dot").replaceAll("_", "underscore");
@@ -244,6 +282,7 @@ contentFiles.forEach(contentfile => {
     // add click event listener for ajax request
     newFile.addEventListener("click", e => {
       fileNameDiv.innerHTML = contentName;
+      activeContentSha = contentSha;
       sendPostRequest(contentSha, ishtmlFile);
       addViewingClass(e.target);
     });
@@ -330,17 +369,28 @@ function addEventToCode() {
   
   codeLines.forEach(codeLine => {
     const lineNum = codeLine.firstChild;
-    
-    lineNum.classList.add('lineNum');
-    lineNum.addEventListener("click", () => {
-      // highlight when clicked
-      codeLines.forEach(codeLine => {
-        codeLine.firstChild.classList.remove("bgc-yellow");
-      });
-      lineNum.classList.toggle("bgc-yellow");
+    const lineNumber = lineNum.getAttribute('data-line-number');
 
-      const lineNumber = lineNum.getAttribute('data-line-number');
-      console.log('clicked line number:', lineNumber);      
+    lineNum.classList.add("lineNum", `number-${lineNumber}`);
+
+    lineNum.addEventListener("click", () => {
+      // check if already highlighted ? remove if so else remove from all others and add
+      if (lineNum.classList.contains("bgc-yellow")) {
+        lineNum.classList.remove("bgc-yellow");
+      } else {
+        codeLines.forEach(codeLine => {
+          codeLine.firstChild.classList.remove("bgc-yellow");
+        });
+        lineNum.classList.add("bgc-yellow");
+
+        // proc modal
+        console.log("proccing modal");
+        commentModalLabel.innerHTML = `Add Comment to line ${lineNumber}?`;
+        modalCommentLineNumber.value = lineNumber;
+        myModal.show();
+      }
+
+      
     })
   })
 }
@@ -386,25 +436,33 @@ commentsH4.addEventListener("click", () => {
 // File comment logic
 fileCommentForm.addEventListener("submit", (e) => {
   e.preventDefault();
-  AddFileCommentPOST();
+  AddFileCommentPOST(fileCommentInput.value, null);
   fileCommentInput.value = "";
 })
 
+// modal comment logic
+modalCommentForm.addEventListener("submit", (e) => {
+  e.preventDefault();
+  AddFileCommentPOST(modalCommentInput.value, modalCommentLineNumber.value);
+  modalCommentInput.value = "";
+  myModal.hide();
+})
+
 // Ajax Request : File Comment
-function AddFileCommentPOST() {
-  // get active line number
-  const activeLine = document.querySelector(".bgc-yellow");
-  let activeLineNum = null;
-  if (activeLine) {
-    activeLineNum = activeLine.getAttribute("data-line-number");
-  }
+function AddFileCommentPOST(comment, line_number) {
+  // // get active line number
+  // const activeLine = document.querySelector(".bgc-yellow");
+  // let activeLineNum = null;
+  // if (activeLine) {
+  //   activeLineNum = activeLine.getAttribute("data-line-number");
+  // }
 
   // contruct data
   const data = {
     'repo': "{{ object.path|safe }}", 
-    'file_name': fileNameDiv.innerHTML, 
-    'comment': fileCommentInput.value,
-    'line_number': activeLineNum
+    'file_sha': activeContentSha, 
+    'comment': comment,
+    'line_number': line_number,
   }
   console.log('sending:', data);
 
@@ -439,7 +497,18 @@ function AddFileComments(data) {
   console.log(data_json);
   data_json.forEach(d => {
     file_comment_li = document.createElement("li");
-    file_comment_li.innerHTML = d['fields']['content'];
+    
+    // check if there is line number
+    if (d['fields']['line_number']) {
+      file_comment_li.innerHTML = `[${d['fields']['line_number']}] ${d['fields']['content']}`;
+      file_comment_li.classList.add("toggle-line-number"); 
+      file_comment_li.addEventListener("click", () => {
+        const targetedLine = document.querySelector(`.number-${d['fields']['line_number']}`).parentNode;
+        targetedLine.classList.toggle("bgc-green");
+      })
+    } else {
+      file_comment_li.innerHTML = '[-] ' + d['fields']['content'];
+    }
 
     fileCommentUl.appendChild(file_comment_li);
   })

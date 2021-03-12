@@ -390,7 +390,7 @@ class AddFileCommentView(View):
         )
         repoContentFile = RepoContentFile.objects.get(
             repo_connected=githubRepo,
-            name=data.get('file_name'),
+            sha=data.get('file_sha'),
         )
         
         # create new file comment
@@ -415,7 +415,7 @@ class AddFileCommentView(View):
         )
 
         context = {
-            'data': file_comments_json,
+            'file_comments': file_comments_json,
         }
         
         return HttpResponse(json.dumps(context), content_type='application/json')
