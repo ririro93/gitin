@@ -21,15 +21,15 @@
           <div class="form-group">
             <input type="text" id="modal-comment-input" name="file_comment" placeholder="Write a comment...">
             <input type="hidden" id="modal-comment-line-number">
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+              <button type="submit" class="btn btn-primary">Add Comment</button>
+            </div>
           </div>
         </form>
         {% if not user.is_authenticated %}
         <a class="btn btn-outline-secondary d-block comment-login-btn" href="{% url 'account_login' %}?next={{ request.path }}">Log in to add a comment!</a><br>
         {% endif %}
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary">Add Comment</button>
       </div>
     </div>
   </div>
@@ -393,6 +393,11 @@ function addEventToCode() {
         commentModalLabel.innerHTML = `Add Comment to line ${lineNumber}?`;
         modalCommentLineNumber.value = lineNumber;
         myModal.show();
+
+        // select input (focus gets stolen withou setTimeout())
+        setTimeout(() => {
+          modalCommentInput.focus();
+        }, 500);
       }
 
       
