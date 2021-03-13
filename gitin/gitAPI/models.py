@@ -39,24 +39,6 @@ class GithubRepo(models.Model):
 
     def __str__(self):
         return self.name
-    
-class RepoComment(models.Model):
-    repo_connected = models.ForeignKey(
-        GithubRepo,
-        related_name='repo_comments',
-        on_delete=models.CASCADE,
-    )
-    author = models.ForeignKey(
-        User,
-        related_name='repo_comments',
-        on_delete=models.CASCADE,
-    )
-    content = models.CharField(max_length=400)
-    created = models.DateTimeField(auto_now_add=True)
-    updated = models.DateTimeField(auto_now=True)
-    
-    def __str__(self):
-        return f'{self.author} {self.repo_connected} {self.content}'
 
 class RepoCommit(models.Model):
     repo_connected = models.ForeignKey(

@@ -49,14 +49,14 @@
       <!-- invisible element for formatting -->
       <div class="d-flex invisible padding-right">
         <div class="text-secondary me-3">
-          last updated at: {{ updated_at }}
+          last updated at: {{ object.updated_at }}
         </div> 
         <button class="btn repo-refresh text-success repo-refresh shadow-none p-0"><i class="fas fa-sync-alt"></i></button>
       </div>
       <h3 class="m-0">{{ object.path }}</h3>
       <div class="d-flex padding-right">
         <div class="text-secondary me-3">
-          last updated at: {{ updated_at }}
+          last updated at: {{ object.updated_at }}
         </div> 
         <a href="{% url 'refresh-repo' pk=object.pk %}" class="btn repo-refresh text-success repo-refresh shadow-none p-0"><i class="fas fa-sync-alt"></i></a>
       </div>
@@ -73,13 +73,14 @@
               <i class="far fa-minus-square collapse-folder-icon"></i>
             </span>
           </header>
-          <div class="explorer-div">
+          <div class="explorer-div mt-4">
             <span class="caret caret-down root-span"></span>
             <ul class="nested active root-dir">
             </ul>
           </div>
         </nav>
         
+        {% comment %}
         <!-- Repo Comments (middle) -->
         <section class="comments-section px-3 pt-3">          
           <header class="d-flex justify-content-between align-items-center mb-4 comments-header text-secondary">
@@ -118,6 +119,7 @@
             {% endif %}
           </div>
         </section>
+        {% endcomment %}
 
         <!-- File Comments (bottom) -->
         <section class="comments-section px-3 pt-3">          
@@ -174,7 +176,7 @@
 <script>
 // get data from backend
 const contentFiles = {{ contents|safe }};
-const repoPath = "{{ repo_path|safe }}";
+const repoPath = "{{ object.path|safe }}";
 
 // select elements
 const collapseBtn = document.querySelector(".collapse-btn");
@@ -216,6 +218,7 @@ rootSpan.innerHTML = "{{ object.name|safe }}";
 const myModal = new bootstrap.Modal(document.getElementById("commentModal"));
 
 // make new dom elements with file contents data
+let activeContentPath = "";
 let activeContentSha = "";
 contentFiles.forEach(contentfile => {
   const contentType = contentfile.fields.content_type;
@@ -282,24 +285,26 @@ contentFiles.forEach(contentfile => {
     // add click event listener for ajax request
     newFile.addEventListener("click", e => {
       fileNameDiv.innerHTML = contentName;
-      activeContentSha = contentSha;
-      sendPostRequest(contentSha, ishtmlFile);
+      activeContentPath = contentfile.fields.path;
+      activeContentSha = contentfile.fields.sha;
+      sendPostRequest(ishtmlFile);
       addViewingClass(e.target);
     });
-
+    
     // append new file to parent element
     newFile.prepend(icon);
     parentDir.appendChild(newFile);
-
+    
     // if file name is README.md show on screen
     if (contentName === "README.md") {
       console.log("README.md file exists");
       fileNameDiv.innerHTML = contentName;
-      sendPostRequest(contentSha);
+      activeContentPath = contentfile.fields.path;
+      activeContentSha = contentfile.fields.sha;
+      sendPostRequest(false);
       newFile.classList.add("viewing");
     }
   }
-
 });
 
 // if no README.md file in project
@@ -317,11 +322,11 @@ togglers.forEach(toggler => {
 });
 
 // Ajax Request : display contents & comments
-function sendPostRequest(contentSha, ishtmlFile) {
+function sendPostRequest(ishtmlFile) {
   $.ajax({
     url: 'get-file/',
     type: 'post',
-    data: {'sha': contentSha, 'repo_path': repoPath},
+    data: {'sha': activeContentSha, 'file_path': activeContentPath, 'repo_path': repoPath},
     headers: { "X-CSRFToken": "{{ csrf_token }}"},
   }).done(data => {
     console.log('data successfully received: ', data);

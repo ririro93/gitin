@@ -3,7 +3,6 @@ from django.contrib import admin
 from .models import (
     GithubUser, 
     GithubRepo, 
-    RepoComment, 
     RepoCommit,
     RepoContentFile,
     FileComment,
@@ -35,17 +34,6 @@ class GithubRepoAdmin(admin.ModelAdmin):
         'created_at', 
         'updated_at', 
         'pushed_at',
-    )
-
-@admin.register(RepoComment)
-class RepoCommentAdmin(admin.ModelAdmin):
-    date_hierarchy = 'updated'
-    list_display = (
-        'repo_connected',
-        'author',
-        'content',
-        'created',
-        'updated',
     )
 
 

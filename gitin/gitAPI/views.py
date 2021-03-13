@@ -14,8 +14,13 @@ from django.views.generic import DetailView, ListView, CreateView
 from django.views.generic.edit import FormMixin
 from django.utils import timezone
 
-from .models import GithubUser, GithubRepo, RepoComment, RepoCommit, RepoContentFile, FileComment
-from .forms import CommentForm
+from .models import (
+    GithubUser, 
+    GithubRepo, 
+    RepoCommit, 
+    RepoContentFile, 
+    FileComment
+)
 
 G_TOKEN = django_settings.GITHUB_TOKEN
 G_USERNAME = django_settings.GITHUB_USERNAME
@@ -219,135 +224,35 @@ class UserDetailView(View):
 
 class RepoDetailView(View):    
     def get(self, request, *args, **kwargs):
+        print('########### RepoDetailView')
+        
         # init
         context = {}
-        try:
-            updateRepo = request.GET.updateRepo     # add button to update repo
-        except:
-            updateRepo = False
-        print('###########')
-        print('update: ', updateRepo)
         
         # add githubRepo to context
-        self.githubRepo = GithubRepo.objects.filter(
-            pk=kwargs.get('pk')
-        )[0]
-        context['object'] = self.githubRepo
-        context['repo_path'] = self.githubRepo.path
-        context['updated_at'] = self.githubRepo.updated_at
-        
-        
-        # if update update commits and contents
-        if updateRepo:
-            # create commits and add to context
-            context['commits'] = self.create_repo_commits()
-            
-            # update contents
-            self.delete_repo_content_files()
-            contents_connected = self.create_repo_content_files()
-            contents_json = serializers.serialize('json', contents_connected)
-            context['contents'] = contents_json
-        else:
-            # add commits to context
-            commits_connected = RepoCommit.objects.filter(
-                repo_connected=self.githubRepo
-            )
-            context['commits'] = commits_connected
-            
-            # add contents to context
-            contents_connected = RepoContentFile.objects.filter(
-                repo_connected=self.githubRepo
-            )
-            contents_json = serializers.serialize('json', contents_connected)
-            context['contents'] = contents_json
-            
-        # add comments to context
-        comments_connected = RepoComment.objects.filter(
-            repo_connected=self.githubRepo
-        ).order_by('-updated')
-        context['comments'] = comments_connected
-        
-        # check this portion
-        if self.request.user.is_authenticated:
-            context['comment_form'] = CommentForm()
-        return render(request, 'gitAPI/repo_detail.html', context)
+        self.githubRepo = GithubRepo.objects.get(pk=kwargs.get('pk'))
+        context['object'] = self.githubRepo        
     
-    def post(self, request, *args, **kwargs):
-        """
-        create new RepoComment
-        """
-        githubRepo = GithubRepo.objects.filter(
-            pk=kwargs.get('pk')
-        )[0]
-        new_comment = RepoComment(
-            content=request.POST.get('content'),
-            author=self.request.user,
-            repo_connected=githubRepo,
+        # add commits to context
+        commits_connected = RepoCommit.objects.filter(
+            repo_connected=self.githubRepo
         )
-        new_comment.save()
-        # why return this? -> to show page it's redireciting
-        return self.get(request, *args, **kwargs)
-    
-    def create_repo_commits(self):
-        # repo
-        repo = github.get_repo(self.githubRepo.path)
+        context['commits'] = commits_connected
         
-        # commits
-        commits = repo.get_commits()
-        
-        # create
-        qs = RepoCommit.objects.none()
-        for commit in commits:
-            repoCommit, created = RepoCommit.objects.get_or_create(
-                repo_connected=self.githubRepo,
-                author=commit.author.login,
-                message=commit.commit.message,
-                url=commit.url,
-                committed_at=commit.commit.committer.date + timedelta(hours=9),
-            )
-            if created:
-                print(f'new commit {commit.url} created!')
-            qs |= RepoCommit.objects.filter(pk=repoCommit.pk)
-        return qs
-
-    def delete_repo_content_files(self):     
-        RepoContentFile.objects.filter(
+        # add contents to context
+        contents_connected = RepoContentFile.objects.filter(
             repo_connected=self.githubRepo
-        ).delete()  
-        print(f"{self.githubRepo}'s RepoContentFiles deleted")
-    
-    def create_repo_content_files(self): 
-        # repo
-        repo = github.get_repo(self.githubRepo.path)
+        )
+        contents_json = serializers.serialize('json', contents_connected)
+        context['contents'] = contents_json
         
-        # contents
-        contents = deque(repo.get_contents(''))
-        
-        # create 
-        qs = RepoContentFile.objects.none()
-        while contents:
-            curr_content = contents.popleft()
-            if curr_content.type == 'dir':
-                for next_content in repo.get_contents(curr_content.path)[::-1]:
-                    contents.appendleft(next_content)
+        return render(request, 'gitAPI/repo_detail.html', context)
 
-            # create regardless of file type
-            repoContentFile, created = RepoContentFile.objects.get_or_create(
-                repo_connected=self.githubRepo,
-                name=curr_content.name,
-                path=curr_content.path,
-                content_type=curr_content.type,
-                url=curr_content.url,
-                sha=curr_content.sha,
-            )
-            print(curr_content.path, ' created')
-            qs |= RepoContentFile.objects.filter(pk=repoContentFile.pk)
-        return qs
-                           
 class FileDetailView(View):
     def post(self, request, *args, **kwargs):
         # format requested data
         data = request.POST.dict()
+        file_path = data.get('file_path')
         sha = data.get('sha')
         repo_path = data.get('repo_path')
         
@@ -358,7 +263,7 @@ class FileDetailView(View):
         
         # get file comments
         my_repo = GithubRepo.objects.get(path=repo_path)
-        my_contentFile = RepoContentFile.objects.get(sha=sha)
+        my_contentFile = RepoContentFile.objects.get(path=file_path)
         
         file_comments = FileComment.objects.filter(
             repo_connected=my_repo,

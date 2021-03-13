@@ -64,7 +64,7 @@
 .explorer-nav {
   font-weight: 300;
   height: fit-content;
-  max-height: 45%;
+  max-height: 80%;
   overflow-y: scroll;
   overflow-x: hidden;
   white-space: nowrap;
@@ -148,11 +148,10 @@
 .comments-section {
   font-weight: 300;
   height: fit-content;
-  max-height: 50%;
+  max-height: 80%;
   overflow-y: scroll;
   overflow-x: hidden;
   white-space: nowrap;
-  border-bottom: 2px solid rgb(56 56 56);
 }
 
 .comments-h4 {
