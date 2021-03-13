@@ -167,6 +167,7 @@ function showSearchResults(res) {
 
   // add data to popover
   exact_user?.forEach(user => {
+    console.log('exact_users:', user);
     const userAnchor = document.createElement("a");
     const userIcon = document.createElement("i");
     const userDiv = document.createElement("div");
@@ -182,10 +183,11 @@ function showSearchResults(res) {
   });
 
   github_users?.forEach(user => {
+    console.log('github_users:', user);
     const userAnchor = document.createElement("a");
     const userIcon = document.createElement("i");
     const userDiv = document.createElement("div");
-
+    
     userAnchor.href = "{% url 'user-detail' pk=0 %}".replace("0", user.pk);
     userAnchor.classList.add("popover-items");
     userIcon.classList.add("fas", "fa-user", "m-3");
@@ -195,8 +197,9 @@ function showSearchResults(res) {
     userAnchor.appendChild(userDiv);
     myPopover.appendChild(userAnchor);
   });
-
+  
   exact_repo?.forEach(repo => {
+    console.log('exact_repo:', repo);
     const repoAnchor = document.createElement("a");
     const repoIcon = document.createElement("i");
     const repoDiv = document.createElement("div");
@@ -210,8 +213,9 @@ function showSearchResults(res) {
     repoAnchor.appendChild(repoDiv);
     myPopover.appendChild(repoAnchor);
   });
-
+  
   github_repos?.forEach(repo => {
+    console.log('github_repo:', repo);
     const repoAnchor = document.createElement("a");
     const repoIcon = document.createElement("i");
     const repoDiv = document.createElement("div");

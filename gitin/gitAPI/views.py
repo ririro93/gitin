@@ -215,8 +215,8 @@ class UserDetailView(View):
                     }
                 )
                 print(new_repo, 'created', created)
-            except error:
-                print('## error:', error)
+            except:
+                print('## error')
         requested_repos = GithubRepo.objects.filter(
             owner=requested_user
         ).order_by('-pushed_at')
@@ -263,7 +263,10 @@ class FileDetailView(View):
         
         # get file comments
         my_repo = GithubRepo.objects.get(path=repo_path)
-        my_contentFile = RepoContentFile.objects.get(path=file_path)
+        my_contentFile = RepoContentFile.objects.get(
+            repo_connected=my_repo,
+            path=file_path,
+        )
         
         file_comments = FileComment.objects.filter(
             repo_connected=my_repo,

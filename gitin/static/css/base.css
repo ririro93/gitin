@@ -119,6 +119,7 @@ body {
   transition: 0.5s;
   overflow-x: hidden;
   overflow-y: scroll;
+  z-index: 10;
 }
 
 .show-popover {
@@ -136,7 +137,7 @@ body {
   justify-content: left;
   align-items: center;
   text-decoration: none;
-  z-index: 1;
+  z-index: 10;
 }
 
 .popover-items:hover {
