@@ -16,15 +16,14 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-        {% if user.is_authenticated %}
-        <form method="POST" autocomplete="off" class="mb-4 modal-comment-form">
+        <form method="POST" autocomplete="off" class="mb-4 modal-comment-form {% if not user.is_authenticated %} d-none {% endif %}">
           {% csrf_token %}
           <div class="form-group">
             <input type="text" id="modal-comment-input" name="file_comment" placeholder="Write a comment...">
             <input type="hidden" id="modal-comment-line-number">
           </div>
         </form>
-        {% else %}
+        {% if not user.is_authenticated %}
         <a class="btn btn-outline-secondary d-block comment-login-btn" href="{% url 'account_login' %}?next={{ request.path }}">Log in to add a comment!</a><br>
         {% endif %}
       </div>
@@ -47,18 +46,19 @@
   <main class="container-fluid main-div d-flex flex-column py-3 px-0">
     <!-- repo path -->
     <header class="d-inline-block repo-path m-0 px-3 d-flex justify-content-between align-items-center">
+      <!-- invisible element for formatting -->
       <div class="d-flex invisible padding-right">
         <div class="text-secondary me-3">
-          last updated at: {{ requested_user.last_repos_update }}
+          last updated at: {{ updated_at }}
         </div> 
         <button class="btn repo-refresh text-success repo-refresh shadow-none p-0"><i class="fas fa-sync-alt"></i></button>
       </div>
       <h3 class="m-0">{{ object.path }}</h3>
       <div class="d-flex padding-right">
         <div class="text-secondary me-3">
-          last updated at: {{ requested_user.last_repos_update }}
+          last updated at: {{ updated_at }}
         </div> 
-        <button class="btn repo-refresh text-success repo-refresh shadow-none p-0"><i class="fas fa-sync-alt"></i></button>
+        <a href="{% url 'refresh-repo' pk=object.pk %}" class="btn repo-refresh text-success repo-refresh shadow-none p-0"><i class="fas fa-sync-alt"></i></a>
       </div>
     </header>
     
@@ -82,18 +82,17 @@
         
         <!-- Repo Comments (middle) -->
         <section class="comments-section px-3 pt-3">          
-          <header class="d-flex justify-content-between align-items-center mb-4 comments-header">
+          <header class="d-flex justify-content-between align-items-center mb-4 comments-header text-secondary">
             <h4 class="m-0 comments-h4">Repo Comments</h4>
           </header>
-          <div class="comments-div">
-            {% if user.is_authenticated %}
-            <form method="POST" autocomplete="off" class="mb-4 commend-form">
+          <div class="comments-div d-none">
+            <form method="POST" autocomplete="off" class="mb-4 commend-form {% if not user.is_authenticated %} d-none {% endif %}">
               {% csrf_token %}
               <div class="form-group">
                 {{ comment_form }}
               </div>
             </form>
-            {% else %}
+            {% if not user.is_authenticated %}
             <a class="btn btn-outline-secondary d-block comment-login-btn" href="{% url 'account_login' %}?next={{ request.path }}">Log in to add a comment!</a><br>
             {% endif %}
             {% if comments %}
@@ -126,14 +125,13 @@
             <h4 class="m-0 comments-h4">File Comments</h4>
           </header>
           <div class="comments-div">
-            {% if user.is_authenticated %}
-            <form method="POST" autocomplete="off" class="mb-4 file-comment-form">
+            <form method="POST" autocomplete="off" class="mb-4 file-comment-form {% if not user.is_authenticated %} d-none {% endif %}">
               {% csrf_token %}
               <div class="form-group">
                 <input type="text" id="file-comment-input"name="file_comment" placeholder="Write a comment...">
               </div>
             </form>
-            {% else %}
+            {% if not user.is_authenticated %}
             <a class="btn btn-outline-secondary d-block comment-login-btn" href="{% url 'account_login' %}?next={{ request.path }}">Log in to add a comment!</a><br>
             {% endif %}
             <ul class="file-comments-ul">
@@ -142,7 +140,7 @@
         </section>
       </aside>
         
-        <!-- File Content (center)-->
+    <!-- File Content (center)-->
     <section class="col-10 file-contents-section">
       <h4 class="text-left file-name mb-4">Loading REAMDE file</h4>
       <pre><code class="file-contents-code"></code></pre>
@@ -210,6 +208,8 @@ const commentModalLabel = document.querySelector("#commentModalLabel");
 const modalCommentForm = document.querySelector(".modal-comment-form");
 const modalCommentInput = document.querySelector("#modal-comment-input");
 const modalCommentLineNumber = document.querySelector("#modal-comment-line-number");
+
+const repoRefreshBtn = document.querySelector(".repo-refresh");
 
 // init
 rootSpan.innerHTML = "{{ object.name|safe }}";
@@ -498,13 +498,18 @@ function AddFileComments(data) {
   data_json.forEach(d => {
     file_comment_li = document.createElement("li");
     
-    // check if there is line number
+    // check if there is line number ? highlight & scroll to line when clicked : add - to line number
     if (d['fields']['line_number']) {
       file_comment_li.innerHTML = `[${d['fields']['line_number']}] ${d['fields']['content']}`;
       file_comment_li.classList.add("toggle-line-number"); 
       file_comment_li.addEventListener("click", () => {
         const targetedLine = document.querySelector(`.number-${d['fields']['line_number']}`).parentNode;
+
+        // highlight
         targetedLine.classList.toggle("bgc-green");
+
+        // scroll to line number
+        scrollToTargetedLine(targetedLine);
       })
     } else {
       file_comment_li.innerHTML = '[-] ' + d['fields']['content'];
@@ -512,6 +517,18 @@ function AddFileComments(data) {
 
     fileCommentUl.appendChild(file_comment_li);
   })
+}
+
+// Scroll to target line when clicking comment
+function scrollToTargetedLine(targetedLine) {
+  console.log("scrolling");
+  let location = targetedLine.offsetTop;
+
+  fileContentsSection.scrollTo({
+    top: location,
+    left: 0,
+    behavior: 'smooth',
+  });
 }
 
 </script>

@@ -7,12 +7,14 @@ from .views import (
     RepoDetailView,
     FileDetailView,
     AddFileCommentView,
+    RefreshRepo,
 )
 
 urlpatterns = [
     path('search/', SearchGithub.as_view(), name='search'),
     path('search/user-detail/<int:pk>/', UserDetailView.as_view(), name='user-detail'),
     path('search/repo-detail/<int:pk>/', RepoDetailView.as_view(), name='repo-detail'),
+    path('search/repo-detail/<int:pk>/refresh/', RefreshRepo.as_view(), name='refresh-repo'),
     path('search/repo-detail/<int:pk>/get-file/', FileDetailView.as_view(), name='file-detail'),
     path('search/repo-detail/<int:pk>/add-file-comment/', AddFileCommentView.as_view(), name='file-comment'),
 ]

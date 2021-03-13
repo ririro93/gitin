@@ -6,7 +6,7 @@ from github import Github
 from collections import deque
 from datetime import datetime, timedelta
 from django.http import HttpResponse, JsonResponse
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.conf import settings as django_settings
 from django.core import serializers
 from django.views import View
@@ -234,6 +234,7 @@ class RepoDetailView(View):
         )[0]
         context['object'] = self.githubRepo
         context['repo_path'] = self.githubRepo.path
+        context['updated_at'] = self.githubRepo.updated_at
         
         
         # if update update commits and contents
@@ -284,7 +285,7 @@ class RepoDetailView(View):
             repo_connected=githubRepo,
         )
         new_comment.save()
-        # why return this?
+        # why return this? -> to show page it's redireciting
         return self.get(request, *args, **kwargs)
     
     def create_repo_commits(self):
@@ -419,3 +420,85 @@ class AddFileCommentView(View):
         }
         
         return HttpResponse(json.dumps(context), content_type='application/json')
+
+class RefreshRepo(View):
+    # update repo using github API
+    def get(self, request, *args, **kwargs):
+        self.githubRepo = GithubRepo.objects.get(pk=kwargs.get('pk'))
+        
+        # update
+        self.update_github_repo()
+        self.create_repo_commits()
+        self.delete_repo_content_files()
+        self.create_repo_content_files()
+        return redirect('repo-detail', pk=kwargs.get('pk'))
+    
+    def update_github_repo(self):
+        # get repo info with gitAPI
+        new_repo = github.get_repo(self.githubRepo.path)
+
+        # update
+        defaults={
+            'description': new_repo.description,
+            'pushed_at': new_repo.pushed_at + timedelta(hours=9),
+            'homepage': new_repo.homepage,
+            'number_of_commits': new_repo.get_commits().totalCount,  
+        }
+        repo = GithubRepo.objects.get(pk=self.githubRepo.pk)
+        for key, val in defaults.items():
+            setattr(repo, key, val)
+        repo.save()
+        print('## github_repo updated')
+        
+    def create_repo_commits(self):
+        # repo
+        repo = github.get_repo(self.githubRepo.path)
+        
+        # commits
+        commits = repo.get_commits()
+        
+        # create
+        for commit in commits:
+            repoCommit, created = RepoCommit.objects.get_or_create(
+                repo_connected=self.githubRepo,
+                author=commit.author.login,
+                message=commit.commit.message,
+                url=commit.url,
+                committed_at=commit.commit.committer.date + timedelta(hours=9),
+            )
+            if created:
+                print(f'new commit {commit.url} created!')
+
+    def delete_repo_content_files(self):     
+        RepoContentFile.objects.filter(
+            repo_connected=self.githubRepo
+        ).delete()  
+        print(f"{self.githubRepo}'s RepoContentFiles deleted")
+    
+    def create_repo_content_files(self): 
+        # repo
+        repo = github.get_repo(self.githubRepo.path)
+        
+        # contents
+        contents = deque(repo.get_contents(''))
+        
+        # create
+        while contents:
+            curr_content = contents.popleft()
+            if curr_content.type == 'dir':
+                for next_content in repo.get_contents(curr_content.path)[::-1]:
+                    contents.appendleft(next_content)
+
+            # create regardless of file type
+            repoContentFile, created = RepoContentFile.objects.get_or_create(
+                repo_connected=self.githubRepo,
+                name=curr_content.name,
+                path=curr_content.path,
+                content_type=curr_content.type,
+                url=curr_content.url,
+                sha=curr_content.sha,
+            )
+            if created:
+                print(curr_content.path, ' created')
+            else:
+                print(curr_content.path, ' updated')
