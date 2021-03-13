@@ -350,7 +350,8 @@ class RefreshRepo(View):
             'description': new_repo.description,
             'pushed_at': new_repo.pushed_at + timedelta(hours=9),
             'homepage': new_repo.homepage,
-            'number_of_commits': new_repo.get_commits().totalCount,  
+            'number_of_commits': new_repo.get_commits().totalCount,
+            'refreshed_at': timezone.now(),
         }
         repo = GithubRepo.objects.get(pk=self.githubRepo.pk)
         for key, val in defaults.items():

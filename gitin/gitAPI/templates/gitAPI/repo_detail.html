@@ -49,16 +49,16 @@
       <!-- invisible element for formatting -->
       <div class="d-flex invisible padding-right">
         <div class="text-secondary me-3">
-          last updated at: {{ object.updated_at }}
+          last refreshed at: {{ object.refreshed_at }}
         </div> 
-        <button class="btn repo-refresh text-success repo-refresh shadow-none p-0"><i class="fas fa-sync-alt"></i></button>
+        <button class="btn text-success shadow-none p-0"><i class="fas fa-sync-alt"></i></button>
       </div>
       <h3 class="m-0">{{ object.path }}</h3>
       <div class="d-flex padding-right">
         <div class="text-secondary me-3">
-          last updated at: {{ object.updated_at }}
+          last refreshed at : {{ object.refreshed_at }}
         </div> 
-        <a href="{% url 'refresh-repo' pk=object.pk %}" class="btn repo-refresh text-success repo-refresh shadow-none p-0"><i class="fas fa-sync-alt"></i></a>
+        <button class="btn repo-refresh text-success shadow-none p-0"><i class="fas fa-sync-alt"></i></button>
       </div>
     </header>
     
@@ -541,6 +541,12 @@ function scrollToTargetedLine(targetedLine) {
   });
 }
 
+// Click Repo Refresh Btn
+repoRefreshBtn.addEventListener("click", () => {
+  repoRefreshBtn.classList.add("fa-spin");
+  console.log("refreshing repo");
+  window.location = "{% url 'refresh-repo' pk=object.pk %}";
+})
 </script>
 
 {% endblock %}

@@ -27,6 +27,7 @@ class GithubRepo(models.Model):
     created_at = models.DateTimeField()
     pushed_at = models.DateTimeField()
     updated_at = models.DateTimeField(auto_now=True)
+    refreshed_at = models.DateTimeField(blank=True, null=True)
     homepage = models.CharField(max_length=200, blank=True, null=True)
     number_of_commits = models.IntegerField()
     path = models.CharField(max_length=300)
