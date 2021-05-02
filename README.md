@@ -33,7 +33,7 @@
             - [ ] gihub.io link
             - [ ] bio
             - [ ] interests
-            - [ ] follwers / following
+            - [ ] followers / following
         - [ ] Research other services
     - [ ] home page
     - [ ] feeds

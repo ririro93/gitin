@@ -12,6 +12,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('accounts/', include('allauth.urls')),   
     path('github/', include('gitAPI.urls')),
+    path('tutorials/', include('tutorials.urls')),
 ]
 
 if settings.DEBUG:

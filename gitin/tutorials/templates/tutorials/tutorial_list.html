@@ -1,0 +1,7 @@
+{% extends 'base.html' %}
+
+{% block content %}
+{% for tutorial in tutorials %}
+<div>{{ tutorial.title }}</div>
+{% endfor %}
+{% endblock %}
