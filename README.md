@@ -1,4 +1,5 @@
 # Github_SNS
+> A community where more user-friendly coding tutorials can be made
 
 ## Goals
 `[ririro93]`
