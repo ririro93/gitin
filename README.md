@@ -51,7 +51,7 @@
             - [ ] getting updated files takes too long
         - [ ] explorer
             - [x] tree view
-            - [ ] fold all feature
+            - [x] fold all feature
             - [x] independent scrollbar
             - [ ] does not work when Korean chars in id (when directory)
                 -> ex). assets-postunderscoreimages-2021-01-27-객체의 크기와 가비지컬렉터
@@ -63,18 +63,19 @@
         - [x] google
         - [x] github
         - [ ] facebook
+            - app needs to be approved beforehand
         - [x] twitter
     - [x] if user tries to sign in using a username that already exists on Github -> ask if same person
         - yes -> would you like to sign in using your github account?
         - no -> please choose a different username. 
     - [x] logout redirect to previous page
     - [ ] show logged out message
-    - [ ] using github API's search might be better than using PyGithub get_user() and get_repo() methods
-        -[ ] this feature existed on PyGithub too.. -> update using this
+    - [x] using github API's search might be better than using PyGithub get_user() and get_repo() methods
+        -[x] this feature existed on PyGithub too.. -> update using this
 
 - [ ] db
     - [ ] migrate to postgres
-    - [ ] button on RepoDetailView page to update db
+    - [x] button on RepoDetailView page to update db
 
 - [ ] features
     - [ ] follow other people
@@ -192,6 +193,6 @@ Learned
 ## References
 (1) [medium post](https://whizzoe.medium.com/in-5-mins-set-up-google-login-to-sign-up-users-on-django-e71d5c38f5d5) : google login <br>
 (2) [iconfinder](https://www.iconfinder.com/social-media-icons) : sns icons <br>
-(3) [ImageField](https://studygyaan.com/django/how-to-upload-and-display-image-in-django) : profile image
-(4) [dev.to](https://dev.to/radualexandrub/how-to-create-a-comment-section-for-your-django-blog-3egp)
-(5) [medium](https://gavinwiener.medium.com/modifying-django-allauth-forms-6eb19e77ef56)
+(3) [ImageField](https://studygyaan.com/django/how-to-upload-and-display-image-in-django) : profile image <br>
+(4) [dev.to](https://dev.to/radualexandrub/how-to-create-a-comment-section-for-your-django-blog-3egp) <br>
+(5) [medium](https://gavinwiener.medium.com/modifying-django-allauth-forms-6eb19e77ef56) <br>

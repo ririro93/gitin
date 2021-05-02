@@ -27,8 +27,6 @@ INSTALLED_APPS = [
     'profiles',
     'gitAPI',
     'accounts',
-
-    
 ]
 
 MIDDLEWARE = [
@@ -135,7 +133,7 @@ SOCIALACCOUNT_PROVIDERS = {
 }
 
 # others
-SITE_ID = 4
+SITE_ID = 5
 AUTHENTICATION_BACKENDS = [
     # Needed to login by username in Django admin, regardless of `allauth`
     'django.contrib.auth.backends.ModelBackend',
